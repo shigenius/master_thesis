@@ -199,7 +199,5 @@ def main(_):
                                           FLAGS.ignore_difficult_instances)
           writer.write(tf_example.SerializeToString())
 
-
-
 if __name__ == '__main__':
   tf.app.run()
