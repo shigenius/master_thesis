@@ -1,0 +1,44 @@
+item {
+  id: 1
+  name: 'corp_brown'
+}
+
+item {
+  id: 2
+  name: 'corp_l'
+}
+
+item {
+  id: 3
+  name: 'corp_r'
+}
+
+item {
+  id: 4
+  name: 'engi1_l'
+}
+
+item {
+  id: 5
+  name: 'engi1_r'
+}
+
+item {
+  id: 6
+  name: 'izumikawa_l'
+}
+
+item {
+  id: 7
+  name: 'izumikawa_r'
+}
+
+item {
+  id: 8
+  name: 'kawakami_bench'
+}
+
+item {
+  id: 9
+  name: 'kawakami_kitsuenjo'
+}

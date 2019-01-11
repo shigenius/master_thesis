@@ -15,12 +15,6 @@ flags.DEFINE_string('log_dir', './log/train',
                     'Directory with the log data.')
 FLAGS = flags.FLAGS
 
-def create_train_op():
-    pass
-
-def train():
-    pass
-
 def main(args):
     # load the dataset
     dataset = mnist.get_split('train', FLAGS.data_dir)
