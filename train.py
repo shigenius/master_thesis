@@ -15,7 +15,8 @@ flags.DEFINE_string('log_dir', './log/train',
                     'Directory with the log data.')
 flags.DEFINE_string('extractor_ckpt', '/Users/shigetomi/Downloads/vgg_16.ckpt',
                     '')
-flags.DEFINE_integer('val_freq', 200, 'validation freq per step')
+flags.DEFINE_integer('val_freq', 100, 'validation freq per step')
+flags.DEFINE_integer('val_num_batch', 20, 'num of running validation per step')
 
 FLAGS = flags.FLAGS
 
@@ -25,13 +26,13 @@ def main(args):
     train_dataset = shisa_instances.get_split('train', FLAGS.data_dir)
     valid_dataset = shisa_instances.get_split('val', FLAGS.data_dir)
     # load batch of dataset
-    train_images, train_crops, train_labels, train_bboxes = load_batch(
+    train_images, train_crops, train_labels, train_bboxes, train_fnames = load_batch(
         train_dataset,
         FLAGS.batch_size,
         height=shigenet.default_input_size,
         width=shigenet.default_input_size,
         is_training=True)
-    valid_images, valid_crops, valid_labels, valid_bboxes = load_batch(
+    valid_images, valid_crops, valid_labels, valid_bboxes, valid_fnames = load_batch(
         valid_dataset,
         FLAGS.batch_size,
         height=shigenet.default_input_size,
@@ -96,11 +97,21 @@ def main(args):
 
         # validation
         if train_step_fn.step % FLAGS.val_freq == 0:
-            val_acc, val_loss = session.run([train_step_fn.valid_accuracy, valid_loss])
 
-            print('Step %s - Validation Loss: %.2f Accuracy: %.2f%%' % (
-            str(train_step_fn.step).rjust(6, '0'), val_loss, val_acc * 100))
-            # print("filename %s" % filenames)
+            val_acc_l = []
+            val_loss_l = []
+            # filenames_l = []
+            for i in range(FLAGS.val_num_batch):
+                val_acc, val_loss, filenames = session.run([train_step_fn.valid_accuracy, valid_loss, train_step_fn.fnames])
+                val_acc_l.append(val_acc)
+                val_loss_l.append(val_loss)
+                # filenames_l.append(filenames)
+
+            ave_val_acc = sum(val_acc_l) / len(val_acc_l)
+            ave_val_loss = sum(val_loss_l) / len(val_loss_l)
+            print('Step %s - Average(num:%d) Validation Loss: %.2f Accuracy: %.2f%%' % (
+            str(train_step_fn.step).rjust(6, '0'), FLAGS.val_num_batch, ave_val_loss, ave_val_acc * 100))
+            # print("filename %s" % filenames_l)
 
         train_step_fn.step += 1
         return [total_loss, should_stop]
@@ -108,7 +119,7 @@ def main(args):
     train_step_fn.step = 0
     train_step_fn.train_accuracy = train_accuracy
     train_step_fn.valid_accuracy = valid_accuracy
-    train_step_fn.fnames = fnames
+    # train_step_fn.fnames = valid_fnames
 
     init_op = tf.global_variables_initializer()
 

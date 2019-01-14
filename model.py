@@ -19,10 +19,14 @@ def lenet(images):
     return net
 
 
-def shigenet(images, crops, num_classes, is_training=False, reuse=None):
+def shigenet(images, crops, num_classes, dropout=0.5, is_training=False, reuse=None):
     with tf.variable_scope('shigenet', reuse=reuse) as scope:
-        arg_scope = vgg.vgg_arg_scope()
-        with slim.arg_scope(arg_scope):
+        with slim.arg_scope([slim.conv2d, slim.fully_connected],
+                            activation_fn=tf.nn.relu,
+                            weights_initializer=tf.truncated_normal_initializer(0.0, 0.01),
+                            weights_regularizer=slim.l2_regularizer(0.0005)):
+        # arg_scope = vgg.vgg_arg_scope()
+        # with slim.arg_scope(arg_scope):
             # with tf.variable_scope('extractor', reuse=tf.AUTO_REUSE) as scope:
                 # logits_l, end_points_l = vgg.vgg_16(crops, num_classes=1000, is_training=False)
                 # feature_l = end_points_l['shigenet/extractor/vgg_16/pool3']
@@ -63,11 +67,13 @@ def shigenet(images, crops, num_classes, is_training=False, reuse=None):
             with tf.variable_scope('logit') as scope:
                 net = tf.concat([net_l, net_g], 3)
                 # net = tf.add(net_l, net_g)
-                print(net)
                 net = slim.flatten(net, scope='flatten')
+                net = slim.fully_connected(net, 1000, scope='fc1')
+                net = slim.dropout(net, dropout, scope='dropout1')
                 net = slim.fully_connected(net, 500, scope='fc2')
+                net = slim.dropout(net, dropout, scope='dropout2')
                 net = slim.fully_connected(net, num_classes, activation_fn=None, scope='fc3')
-                show_variables()
+                # show_variables()
         return net
 
 
@@ -89,9 +95,9 @@ def load_batch(dataset, batch_size=5, height=shigenet.default_input_size, width=
         width,
         is_training)
 
-    images, crops, labels, bboxes = tf.train.batch(
-        [image, cropped, label, bbox],
+    images, crops, labels, bboxes, fnames = tf.train.batch(
+        [image, cropped, label, bbox, fname],
         batch_size=batch_size,
         allow_smaller_final_batch=True)
 
-    return images, crops, labels, bboxes
+    return images, crops, labels, bboxes, fnames
