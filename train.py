@@ -24,7 +24,7 @@ def main(args):
     # load the dataset
     train_dataset = shisa_instances.get_split('train', FLAGS.data_dir)
     valid_dataset = shisa_instances.get_split('val', FLAGS.data_dir)
-    load batch of dataset
+    # load batch of dataset
     train_images, train_crops, train_labels, train_bboxes = load_batch(
         train_dataset,
         FLAGS.batch_size,
