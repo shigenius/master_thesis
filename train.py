@@ -112,16 +112,16 @@ def main(args):
 
     init_op = tf.global_variables_initializer()
 
-    def name_in_checkpoint(var):
-        if "shigenet" in var.op.name:
-            return var.op.name.replace("shigenet/extractor/", "")
-
-    # Restore only the convolutional layers:
-    variables_to_restore = slim.get_variables_to_restore(include=['shigenet', 'extractor'])
-    variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if
-                            "vgg_16" in var.op.name and 'RMSProp' not in var.op.name}
-    print(variables_to_restore)
-    init_fn = slim.assign_from_checkpoint_fn(FLAGS.extractor_ckpt, variables_to_restore)
+    # def name_in_checkpoint(var):
+    #     if "shigenet" in var.op.name:
+    #         return var.op.name.replace("shigenet/extractor/", "")
+    #
+    # # Restore only the convolutional layers:
+    # variables_to_restore = slim.get_variables_to_restore(include=['shigenet', 'extractor'], exclude=['vgg16/fc6', 'vgg16/fc7', 'vgg16/fc8'])
+    # variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if
+    #                         "vgg_16" in var.op.name and 'RMSProp' not in var.op.name}
+    # print(variables_to_restore)
+    # init_fn = slim.assign_from_checkpoint_fn(FLAGS.extractor_ckpt, variables_to_restore)
 
     # from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoint_file
     # print_tensors_in_checkpoint_file(FLAGS.extractor_ckpt, all_tensors=True, tensor_name='', all_tensor_names="")
@@ -136,7 +136,7 @@ def main(args):
         FLAGS.log_dir,
         save_summaries_secs=20,
         init_op=init_op,
-        init_fn=init_fn,
+        # init_fn=init_fn,
         train_step_fn=train_step_fn)
 
 if __name__ == '__main__':
