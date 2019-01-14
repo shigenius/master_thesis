@@ -45,18 +45,18 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
   # tf.summary.image('image', image[tf.newaxis, :], 1)
   # tf.summary.image('crop', cropped[tf.newaxis, :], 1)
 
-  # # augmentations
-  # # Because these operations are not commutative, consider randomizing
-  # # the order their operation.
-  # distorted_image = tf.image.random_brightness(distorted_image, max_delta=63)
-  # distorted_image = tf.image.random_contrast(distorted_image, lower=0.2, upper=1.8)
+  # augmentations
+  # if is_training:
+  # tf.set_random_seed
+  # distorted_image = tf.image.random_brightness(image, max_delta=63, seed=seed)
+  # distorted_image = tf.image.random_contrast(distorted_image, lower=0.2, upper=1.8, seed=seed)
   # tf.image.random_hue(image, max_delta, seed=None)
   # tf.image.random_saturation(image, lower, upper, seed=None)
   #
   # # Subtract off the mean and divide by the variance of the pixels.
   # float_image = tf.image.per_image_whitening(distorted_image)
 
-  # -1~1のnormalize
+  # normalize -1~1
   image = tf.to_float(image)
   image = tf.subtract(image, 128.0)
   image = tf.divide(image, 128.0)

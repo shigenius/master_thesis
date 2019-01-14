@@ -16,7 +16,7 @@ slim = tf.contrib.slim
 
 _FILE_PATTERN = 'VOC2007-%s.tfrecord'
 
-_SPLITS_TO_SIZES = {'train': 60000, 'test': 10000}
+_SPLITS_TO_SIZES = {'train': 60000, 'val': 60000, 'test': 60000}
 
 _NUM_CLASSES = 10
 
