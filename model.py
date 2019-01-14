@@ -28,13 +28,11 @@ def shigenet(images, crops, num_classes, is_training=False, reuse=None):
                 feature_l = end_points_l['shigenet/extractor/vgg_16/conv5/conv5_3']
             with tf.variable_scope('extractor', reuse=True) as scope:
                 logits_g, end_points_g = vgg.vgg_16(images, num_classes=1000, is_training=False)
-                print(end_points_g)
                 feature_g = end_points_g['shigenet/extractor/vgg_16/conv5/conv5_3']
             # with tf.variable_scope('branch_local') as scope:
             #
             # with tf.variable_scope('branch_global') as scope:
             with tf.variable_scope('logit') as scope:
-                print(feature_g)
                 net = tf.concat([feature_g, feature_l], 3)
                 net = slim.conv2d(net, 1024, [3, 3], scope='conv1')
                 net = slim.max_pool2d(net, [2, 2], scope='pool1')
