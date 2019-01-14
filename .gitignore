@@ -2,4 +2,5 @@
 log/
 model/
 *.tfrecord*
-
+__pycache__/
+.pyc

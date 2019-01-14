@@ -23,7 +23,7 @@ import tensorflow as tf
 slim = tf.contrib.slim
 
 
-def preprocess_image(image, output_height, output_width, is_training):
+def preprocess_image(image, bbox, output_height, output_width, is_training):
   """Preprocesses the given image.
   Args:
     image: A `Tensor` representing an image of arbitrary size.
@@ -34,9 +34,48 @@ def preprocess_image(image, output_height, output_width, is_training):
   Returns:
     A preprocessed image.
   """
+  tf.summary.image('image_orig', image[tf.newaxis, :], 1)
+
+  cropped = tf.squeeze(tf.image.crop_and_resize(image[tf.newaxis, :], bbox, box_ind=[0], crop_size=[output_height, output_width]), [0])
+  # # アス比を保ったまま，縦横幅の小さい方に合わせてcropする
+  min_size = tf.reduce_min(tf.shape(image)[:-1])
+  image = tf.image.resize_images(tf.image.resize_image_with_crop_or_pad(image, min_size, min_size), [output_height, output_width])
+
+  # #  visualize on tensorboard
+  # tf.summary.image('image', image[tf.newaxis, :], 1)
+  # tf.summary.image('crop', cropped[tf.newaxis, :], 1)
+
+  # # augmentations
+  # # Because these operations are not commutative, consider randomizing
+  # # the order their operation.
+  # distorted_image = tf.image.random_brightness(distorted_image, max_delta=63)
+  # distorted_image = tf.image.random_contrast(distorted_image, lower=0.2, upper=1.8)
+  # tf.image.random_hue(image, max_delta, seed=None)
+  # tf.image.random_saturation(image, lower, upper, seed=None)
+  #
+  # # Subtract off the mean and divide by the variance of the pixels.
+  # float_image = tf.image.per_image_whitening(distorted_image)
+
+  # -1~1のnormalize
   image = tf.to_float(image)
-  image = tf.image.resize_image_with_crop_or_pad(
-      image, output_width, output_height)
   image = tf.subtract(image, 128.0)
-  image = tf.div(image, 128.0)
-  return image
+  image = tf.divide(image, 128.0)
+  cropped = tf.to_float(cropped)
+  cropped = tf.subtract(cropped, 128.0)
+  cropped = tf.divide(cropped, 128.0)
+  return image, cropped
+
+  # # cropping
+  # def map(fn, arrays, dtype=tf.float32):  # n入力のmap
+  #   # assumes all arrays have same leading dim
+  #   indices = tf.range(tf.shape(arrays[0])[0])
+  #   out = tf.map_fn(lambda ii: fn(*[array[ii] for array in arrays]), indices, dtype=dtype)
+  #   return out
+  #
+  # # imagesからbboxes(bboxが複数ある場合ひとつめのbbox)の範囲でcropし，batchにして返す．
+  # fn = lambda image, bbox: tf.squeeze(
+  #   tf.image.crop_and_resize(image[tf.newaxis, :], bbox, box_ind=[0], crop_size=[224, 224]), [0])
+  # crops = map(fn, [images, bboxes])
+
+  # image = tf.image.resize_image_with_crop_or_pad(
+  #     image, output_width, output_height)

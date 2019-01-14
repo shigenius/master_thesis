@@ -32,7 +32,7 @@ from skimage import io
 #     io.imshow(jpeg_img)
 #     io.show()
 
-OUTPUT_TFRECORD_NAME = '/Users/shigetomi/dev/master_thesis/data/'
+OUTPUT_TFRECORD_NAME = '/Users/shigetomi/dev/master_thesis/data/VOC2007-test.tfrecord'
 cnt = len(list(tf.python_io.tf_record_iterator(OUTPUT_TFRECORD_NAME)))
 print("データ件数：{}".format(cnt))
 
