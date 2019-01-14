@@ -80,7 +80,9 @@ def main(args):
     valid_accuracy = slim.metrics.accuracy(
         tf.argmax(valid_predictions, 1),
         tf.argmax(valid_one_hot_labels, 1))  # ... or whatever metrics needed
-
+    tf.summary.scalar('train_acc', train_accuracy)
+    tf.summary.scalar('valid_acc', valid_accuracy)
+    
     def train_step_fn(session, *args, **kwargs): # custom train_step_fn
         # 1回の勾配計算を実行するために呼び出す関数
         # 4つの引数（現在のセッション、学習処理、グローバルトレーニングのステップ、キーワード引数の辞書）が必要です
@@ -111,8 +113,8 @@ def main(args):
 
             ave_val_acc = sum(val_acc_l) / len(val_acc_l)
             ave_val_loss = sum(val_loss_l) / len(val_loss_l)
-            print('Step %s - Average(num:%d) Validation Loss: %.2f Accuracy: %.2f%%' % (
-            str(train_step_fn.step).rjust(6, '0'), FLAGS.val_num_batch, ave_val_loss, ave_val_acc * 100))
+            print('Step %s - Average(item:%d) Validation Loss: %.2f Accuracy: %.2f%%' % (
+            str(train_step_fn.step).rjust(6, '0'), FLAGS.val_num_batch*FLAGS.batch_size, ave_val_loss, ave_val_acc * 100))
             # print("filename %s" % filenames_l)
 
         train_step_fn.step += 1
