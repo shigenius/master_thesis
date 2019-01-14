@@ -82,7 +82,7 @@ def main(args):
         tf.argmax(valid_one_hot_labels, 1))  # ... or whatever metrics needed
     tf.summary.scalar('train_acc', train_accuracy)
     tf.summary.scalar('valid_acc', valid_accuracy)
-    
+
     def train_step_fn(session, *args, **kwargs): # custom train_step_fn
         # 1回の勾配計算を実行するために呼び出す関数
         # 4つの引数（現在のセッション、学習処理、グローバルトレーニングのステップ、キーワード引数の辞書）が必要です
