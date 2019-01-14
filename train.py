@@ -102,7 +102,9 @@ def main(args):
             val_loss_l = []
             # filenames_l = []
             for i in range(FLAGS.val_num_batch):
-                val_acc, val_loss, filenames = session.run([train_step_fn.valid_accuracy, valid_loss, train_step_fn.fnames])
+                # val_acc, val_loss, filenames = session.run([train_step_fn.valid_accuracy, valid_loss, train_step_fn.fnames])
+                val_acc, val_loss = session.run(
+                    [train_step_fn.valid_accuracy, valid_loss])
                 val_acc_l.append(val_acc)
                 val_loss_l.append(val_loss)
                 # filenames_l.append(filenames)
