@@ -82,8 +82,8 @@ shigenet.default_input_size = vgg.vgg_16.default_image_size
 def show_variables():
     print('\n'.join([v.name for v in tf.global_variables()]))
 
-def load_batch(dataset, batch_size=5, height=shigenet.default_input_size, width=shigenet.default_input_size, is_training=False):
-    data_provider = slim.dataset_data_provider.DatasetDataProvider(dataset, shuffle=True)
+def load_batch(dataset, batch_size=5, height=shigenet.default_input_size, width=shigenet.default_input_size, is_training=False, shuffle=True):
+    data_provider = slim.dataset_data_provider.DatasetDataProvider(dataset, shuffle=shuffle)
 
     image, label, bbox, fname, videoname = data_provider.get(['image', 'label', 'object/bbox', 'fname', 'videoname'])
 
