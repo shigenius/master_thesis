@@ -26,13 +26,13 @@ def main(args):
     train_dataset = shisa_instances.get_split('train', FLAGS.data_dir)
     valid_dataset = shisa_instances.get_split('val', FLAGS.data_dir)
     # load batch of dataset
-    train_images, train_crops, train_labels, train_bboxes, train_fnames = load_batch(
+    train_images, train_crops, train_labels, train_bboxes, train_fnames, train_vnames = load_batch(
         train_dataset,
         FLAGS.batch_size,
         height=shigenet.default_input_size,
         width=shigenet.default_input_size,
         is_training=True)
-    valid_images, valid_crops, valid_labels, valid_bboxes, valid_fnames = load_batch(
+    valid_images, valid_crops, valid_labels, valid_bboxes, valid_fnames, valid_vnames = load_batch(
         valid_dataset,
         FLAGS.batch_size,
         height=shigenet.default_input_size,
@@ -103,19 +103,22 @@ def main(args):
             val_acc_l = []
             val_loss_l = []
             # filenames_l = []
+            # vnames_l = []
             for i in range(FLAGS.val_num_batch):
-                # val_acc, val_loss, filenames = session.run([train_step_fn.valid_accuracy, valid_loss, train_step_fn.fnames])
+                # val_acc, val_loss, filenames, vnames = session.run([train_step_fn.valid_accuracy, valid_loss, train_step_fn.fnames, train_step_fn.vnames])
                 val_acc, val_loss = session.run(
                     [train_step_fn.valid_accuracy, valid_loss])
                 val_acc_l.append(val_acc)
                 val_loss_l.append(val_loss)
                 # filenames_l.append(filenames)
+                # vnames_l.append(vnames)
 
             ave_val_acc = sum(val_acc_l) / len(val_acc_l)
             ave_val_loss = sum(val_loss_l) / len(val_loss_l)
             print('Step %s - Average(item:%d) Validation Loss: %.2f Accuracy: %.2f%%' % (
             str(train_step_fn.step).rjust(6, '0'), FLAGS.val_num_batch*FLAGS.batch_size, ave_val_loss, ave_val_acc * 100))
             # print("filename %s" % filenames_l)
+            # print("video_name %s" % vnames_l)
 
         train_step_fn.step += 1
         return [total_loss, should_stop]
@@ -124,6 +127,7 @@ def main(args):
     train_step_fn.train_accuracy = train_accuracy
     train_step_fn.valid_accuracy = valid_accuracy
     # train_step_fn.fnames = valid_fnames
+    # train_step_fn.vnames = valid_vnames
 
     init_op = tf.global_variables_initializer()
 

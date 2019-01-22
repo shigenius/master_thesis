@@ -40,7 +40,7 @@ import math
 
 flags = tf.app.flags
 flags.DEFINE_string('data_dir', '/Users/shigetomi/Desktop/dataset_shisas_VOC/dataset_shisa/VOCdevkit/', 'Root directory to raw PASCAL VOC dataset.')
-flags.DEFINE_string('set', 'test', 'Convert training set, validation set or '
+flags.DEFINE_string('set', 'train', 'Convert training set, validation set or '
                     'merged set.')
 flags.DEFINE_string('annotations_dir', 'Annotations',
                     '(Relative) path to annotations directory.')
@@ -101,6 +101,7 @@ def dict_to_tf_example(data,
   truncated = []
   poses = []
   # difficult_obj = []
+
   if 'object' in data:
     for obj in data['object']:
       # difficult = bool(int(obj['difficult']))
@@ -125,6 +126,10 @@ def dict_to_tf_example(data,
           data['filename'].encode('utf8')),
       'image/source_id': dataset_util.bytes_feature(
           data['filename'].encode('utf8')),
+      'image/source_file': dataset_util.bytes_feature(
+          data['sourcefile'].encode('utf8')),
+      'image/source_video': dataset_util.bytes_feature(
+          data['sourcevideo'].encode('utf8')),
       'image/key/sha256': dataset_util.bytes_feature(key.encode('utf8')),
       'image/encoded': dataset_util.bytes_feature(encoded_jpg),
       'image/format': dataset_util.bytes_feature('jpeg'.encode('utf8')),

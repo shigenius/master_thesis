@@ -85,7 +85,7 @@ def show_variables():
 def load_batch(dataset, batch_size=5, height=shigenet.default_input_size, width=shigenet.default_input_size, is_training=False):
     data_provider = slim.dataset_data_provider.DatasetDataProvider(dataset, shuffle=True)
 
-    image, label, bbox, fname = data_provider.get(['image', 'label', 'object/bbox', 'fname'])
+    image, label, bbox, fname, videoname = data_provider.get(['image', 'label', 'object/bbox', 'fname', 'videoname'])
 
     # preprocess and cropping
     image, cropped = lenet_preprocessing.preprocess_image(
@@ -95,9 +95,9 @@ def load_batch(dataset, batch_size=5, height=shigenet.default_input_size, width=
         width,
         is_training)
 
-    images, crops, labels, bboxes, fnames = tf.train.batch(
-        [image, cropped, label, bbox, fname],
+    images, crops, labels, bboxes, fnames, videonames = tf.train.batch(
+        [image, cropped, label, bbox, fname, videoname],
         batch_size=batch_size,
         allow_smaller_final_batch=True)
 
-    return images, crops, labels, bboxes, fnames
+    return images, crops, labels, bboxes, fnames, videonames
