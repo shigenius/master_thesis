@@ -76,7 +76,7 @@ def main(args):
         print(names_to_values)
         for batch in range(20000):
             values = sess.run([accuracy, labels, predictions1D, fnames, vnames])
-            print(values)
+            print(batch, values)
 
     # metric_values = slim.evaluation.evaluate_once(
     #     '',
