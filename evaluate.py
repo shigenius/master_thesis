@@ -89,7 +89,7 @@ def main(args):
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
         num_record = len(list(tf.python_io.tf_record_iterator(dataset.data_sources)))
-        print("num of record:", num_record)
+        # print("num of record:", num_record)
         num_correct = 0
         for batch in range(num_record):
             start_time = time.time()
