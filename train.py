@@ -15,7 +15,7 @@ flags.DEFINE_string('log_dir', './log/train',
                     'Directory with the log data.')
 flags.DEFINE_string('extractor_ckpt', '/Users/shigetomi/Downloads/vgg_16.ckpt',
                     '')
-flags.DEFINE_integer('val_freq', 100, 'validation freq per step')
+flags.DEFINE_integer('val_freq', 500, 'validation freq per step')
 flags.DEFINE_integer('val_num_batch', 20, 'num of running validation per step')
 
 FLAGS = flags.FLAGS
