@@ -22,6 +22,9 @@ import tensorflow as tf
 
 slim = tf.contrib.slim
 
+import random
+seed1 = random.randint(0, 1000000)
+seed2 = random.randint(0, 1000000)
 
 def preprocess_image(image, bbox, output_height, output_width, is_training):
   """Preprocesses the given image.
@@ -46,15 +49,16 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
   # tf.summary.image('crop', cropped[tf.newaxis, :], 1)
 
   # augmentations
-  # if is_training:
-  # tf.set_random_seed
-  # distorted_image = tf.image.random_brightness(image, max_delta=63, seed=seed)
-  # distorted_image = tf.image.random_contrast(distorted_image, lower=0.2, upper=1.8, seed=seed)
-  # tf.image.random_hue(image, max_delta, seed=None)
-  # tf.image.random_saturation(image, lower, upper, seed=None)
-  #
-  # # Subtract off the mean and divide by the variance of the pixels.
-  # float_image = tf.image.per_image_whitening(distorted_image)
+  if is_training:
+    image   = tf.image.random_brightness(image, max_delta=63, seed=seed1)
+    cropped = tf.image.random_brightness(cropped, max_delta=63, seed=seed1)
+    image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed2)
+    cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed2)
+    # tf.image.random_hue(image, max_delta, seed=None)
+    # tf.image.random_saturation(image, lower, upper, seed=None)
+
+    # # Subtract off the mean and divide by the variance of the pixels.
+    # float_image = tf.image.per_image_whitening(distorted_image)
 
   # normalize -1~1
   image = tf.to_float(image)
