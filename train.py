@@ -9,7 +9,7 @@ flags = tf.app.flags
 flags.DEFINE_string('data_dir', './data/',
                     'Directory with the data.')
 flags.DEFINE_integer('batch_size', 10, 'Batch size.')
-flags.DEFINE_integer('num_batches', 100000,
+flags.DEFINE_integer('num_batches', 50000,
                      'Num of batches to train (epochs).')
 flags.DEFINE_string('log_dir', './log/train',
                     'Directory with the log data.')
@@ -154,6 +154,7 @@ def main(args):
         train_op,
         FLAGS.log_dir,
         save_summaries_secs=20,
+        save_interval_secs=60,
         init_op=init_op,
         # init_fn=init_fn,
         train_step_fn=train_step_fn)
