@@ -25,6 +25,8 @@ slim = tf.contrib.slim
 import random
 seed1 = random.randint(0, 1000000)
 seed2 = random.randint(0, 1000000)
+seed3 = random.randint(0, 1000000)
+seed4 = random.randint(0, 1000000)
 
 def preprocess_image(image, bbox, output_height, output_width, is_training):
   """Preprocesses the given image.
@@ -52,13 +54,17 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
   if is_training:
     image   = tf.image.random_brightness(image, max_delta=63, seed=seed1)
     cropped = tf.image.random_brightness(cropped, max_delta=63, seed=seed1)
-    image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed2)
-    cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed2)
-    # tf.image.random_hue(image, max_delta, seed=None)
-    # tf.image.random_saturation(image, lower, upper, seed=None)
+    image   = tf.image.random_saturation(image, lower=0.5, upper=1.5, seed=seed2)
+    cropped = tf.image.random_saturation(cropped, lower=0.5, upper=1.5, seed=seed2)
+    image   = tf.image.random_hue(image, max_delta=0.2, seed=seed3)
+    cropped = tf.image.random_hue(cropped, max_delta=0.2, seed=seed3)
+    image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed4)
+    cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
+
 
     # # Subtract off the mean and divide by the variance of the pixels.
-    # float_image = tf.image.per_image_whitening(distorted_image)
+  # image = tf.image.per_image_whitening(image)
+  # cropped = tf.image.per_image_whitening(cropped)
 
   # normalize -1~1
   image = tf.to_float(image)
