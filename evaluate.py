@@ -90,6 +90,7 @@ def main(args):
 
         num_record = len(list(tf.python_io.tf_record_iterator(dataset.data_sources)))
         print("num of record:", num_record)
+        num_correct = 0
         for batch in range(num_record):
             start_time = time.time()
             acc, label, pred, fname, vname = sess.run([accuracy, labels, predictions1D, filenames, videonames])
@@ -101,6 +102,10 @@ def main(args):
             is_correct = True if label == pred else False
             writer.writerow([fname[0].decode('utf-8'), label+"/"+vname[0].decode('utf-8'), label, pred, is_correct, elapsed_time])
 
+            if is_correct is True:
+                num_correct += 1
+
+        print("num of record:", num_record, "num of correct:", num_correct, "Acc:", num_correct/num_record)
     print("process finished")
     f.close()
 
