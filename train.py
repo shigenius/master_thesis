@@ -157,7 +157,8 @@ def main(args):
         save_interval_secs=60,
         init_op=init_op,
         # init_fn=init_fn,
-        train_step_fn=train_step_fn)
+        train_step_fn=train_step_fn,
+        number_of_steps=FLAGS.num_batches)
 
 if __name__ == '__main__':
   tf.app.run()
