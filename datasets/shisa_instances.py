@@ -16,7 +16,7 @@ slim = tf.contrib.slim
 
 _FILE_PATTERN = 'VOC2007-%s.tfrecord'
 
-_SPLITS_TO_SIZES = {'train': 60000, 'val': 60000, 'test': 60000}
+_SPLITS_TO_SIZES = {'train': 6000, 'val': 6000, 'test': 6000}
 
 _NUM_CLASSES = 10
 
@@ -81,11 +81,14 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
   if dataset_utils.has_labels(dataset_dir):
     labels_to_names = dataset_utils.read_label_file(dataset_dir)
 
+  num_record = len(list(tf.python_io.tf_record_iterator(file_pattern)))
+
   return slim.dataset.Dataset(
       data_sources=file_pattern,
       reader=reader,
       decoder=decoder,
-      num_samples=_SPLITS_TO_SIZES[split_name],
+      # num_samples=_SPLITS_TO_SIZES[split_name],
+      num_samples=num_record,
       num_classes=_NUM_CLASSES,
       items_to_descriptions=_ITEMS_TO_DESCRIPTIONS,
       labels_to_names=labels_to_names)
