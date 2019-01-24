@@ -42,6 +42,7 @@ def get_latest_ckpt(ckpt_dir):
 def main(args):
     label_name_to_id = label_map_util.get_label_map_dict(os.path.join(FLAGS.data_dir, FLAGS.labelfile_name))
     label_id_to_name = {items[1]:items[0] for items in label_name_to_id.items()}
+    label_id_to_name[0] = "background"
     # print(label_id_to_name)
     # eval log
     f = open(os.path.join(FLAGS.log_dir, FLAGS.eval_log_name), 'w')
