@@ -63,8 +63,8 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
 
 
   # Subtract off the mean and divide by the variance of the pixels.
-  image = tf.image.per_image_whitening(image)
-  cropped = tf.image.per_image_whitening(cropped)
+  image = tf.image.per_image_standardization(image)
+  cropped = tf.image.per_image_standardization(cropped)
 
   # normalize -1~1
   image = tf.to_float(image)
