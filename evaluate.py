@@ -13,6 +13,8 @@ import csv
 import time
 import logging
 logging.basicConfig(level=logging.DEBUG)
+import glob
+import re
 
 flags = tf.app.flags
 flags.DEFINE_string('data_dir', './data/',
@@ -31,6 +33,14 @@ flags.DEFINE_integer('eval_interval_secs', 1,
                     'Number of seconds between evaluations.')
 FLAGS = flags.FLAGS
 
+def get_latest_ckpt(ckpt_dir):
+    pattern = r'[0-9]*'
+    latest_id = max([int([j for j in re.findall(pattern, os.path.splitext(i)[0]) if j != ''][0]) for i in
+         glob.glob(ckpt_dir + "/*.meta")])
+    files = [os.path.splitext(i)[0] for i in glob.glob(ckpt_dir + "/*.meta")]
+    latest_ckpt_path = [i for i in files if str(latest_id) in i][0]
+    return latest_ckpt_path
+
 def main(args):
     label_name_to_id = label_map_util.get_label_map_dict(os.path.join(FLAGS.data_dir, FLAGS.labelfile_name))
     label_id_to_name = {items[1]:items[0] for items in label_name_to_id.items()}
@@ -39,7 +49,8 @@ def main(args):
     writer = csv.writer(f, lineterminator='\n')
     writer.writerow(['file_path', 'source_video', 'gt',  'prediction', 'is_correct_label', 'running_time',])
 
-    ckpt_path = os.path.join(FLAGS.checkpoint_dir, FLAGS.checkpoint_name)
+    ckpt_path = get_latest_ckpt(FLAGS.checkpoint_dir)
+    print("ckpt_path:", ckpt_path)
 
     # load the dataset
     dataset = shisa_instances.get_split('test', FLAGS.data_dir)

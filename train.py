@@ -24,7 +24,7 @@ def main(args):
 
     # load the dataset
     train_dataset = shisa_instances.get_split('train', FLAGS.data_dir)
-    valid_dataset = shisa_instances.get_split('val', FLAGS.data_dir)
+    # valid_dataset = shisa_instances.get_split('val', FLAGS.data_dir)
     # load batch of dataset
     train_images, train_crops, train_labels, train_bboxes, train_fnames, train_vnames = load_batch(
         train_dataset,
@@ -32,24 +32,24 @@ def main(args):
         height=shigenet.default_input_size,
         width=shigenet.default_input_size,
         is_training=True)
-    valid_images, valid_crops, valid_labels, valid_bboxes, valid_fnames, valid_vnames = load_batch(
-        valid_dataset,
-        FLAGS.batch_size,
-        height=shigenet.default_input_size,
-        width=shigenet.default_input_size,
-        is_training=False)
+    # valid_images, valid_crops, valid_labels, valid_bboxes, valid_fnames, valid_vnames = load_batch(
+    #     valid_dataset,
+    #     FLAGS.batch_size,
+    #     height=shigenet.default_input_size,
+    #     width=shigenet.default_input_size,
+    #     is_training=False)
 
     # run the image through the model
     train_predictions = shigenet2(train_images, train_crops, train_dataset.num_classes, is_training=True, reuse=None)
-    valid_predictions = shigenet2(valid_images, valid_crops, valid_dataset.num_classes, is_training=False, reuse=True)
+    # valid_predictions = shigenet2(valid_images, valid_crops, valid_dataset.num_classes, is_training=False, reuse=True)
 
     # get the cross-entropy loss
     train_one_hot_labels = slim.one_hot_encoding(
         train_labels,
         train_dataset.num_classes)
-    valid_one_hot_labels = slim.one_hot_encoding(
-        valid_labels,
-        valid_dataset.num_classes)
+    # valid_one_hot_labels = slim.one_hot_encoding(
+    #     valid_labels,
+    #     valid_dataset.num_classes)
 
     slim.losses.softmax_cross_entropy(
         train_predictions,
@@ -59,10 +59,10 @@ def main(args):
     total_loss = slim.losses.get_total_loss()
     tf.summary.scalar('train_total_loss', total_loss)
 
-    valid_loss = slim.losses.softmax_cross_entropy(
-        valid_predictions,
-        valid_one_hot_labels)
-    tf.summary.scalar('valid_loss', valid_loss)
+    # valid_loss = slim.losses.softmax_cross_entropy(
+    #     valid_predictions,
+    #     valid_one_hot_labels)
+    # tf.summary.scalar('valid_loss', valid_loss)
 
     # use RMSProp to optimize
     optimizer = tf.train.RMSPropOptimizer(0.001, 0.9)
@@ -77,11 +77,11 @@ def main(args):
     train_accuracy = slim.metrics.accuracy(
         tf.argmax(train_predictions, 1),
         tf.argmax(train_one_hot_labels, 1))  # ... or whatever metrics needed
-    valid_accuracy = slim.metrics.accuracy(
-        tf.argmax(valid_predictions, 1),
-        tf.argmax(valid_one_hot_labels, 1))  # ... or whatever metrics needed
+    # valid_accuracy = slim.metrics.accuracy(
+    #     tf.argmax(valid_predictions, 1),
+    #     tf.argmax(valid_one_hot_labels, 1))  # ... or whatever metrics needed
     tf.summary.scalar('train_acc', train_accuracy)
-    tf.summary.scalar('valid_acc', valid_accuracy)
+    # tf.summary.scalar('valid_acc', valid_accuracy)
 
     def train_step_fn(session, *args, **kwargs): # custom train_step_fn
         # 1回の勾配計算を実行するために呼び出す関数
@@ -98,34 +98,34 @@ def main(args):
             # print("filename %s" % filenames)
 
         # validation
-        if train_step_fn.step % FLAGS.val_freq == 0:
-
-            val_acc_l = []
-            val_loss_l = []
-            # filenames_l = []
-            # vnames_l = []
-            for i in range(FLAGS.val_num_batch):
-                # val_acc, val_loss, filenames, vnames = session.run([train_step_fn.valid_accuracy, valid_loss, train_step_fn.fnames, train_step_fn.vnames])
-                val_acc, val_loss = session.run(
-                    [train_step_fn.valid_accuracy, valid_loss])
-                val_acc_l.append(val_acc)
-                val_loss_l.append(val_loss)
-                # filenames_l.append(filenames)
-                # vnames_l.append(vnames)
-
-            ave_val_acc = sum(val_acc_l) / len(val_acc_l)
-            ave_val_loss = sum(val_loss_l) / len(val_loss_l)
-            print('Step %s - Average(item:%d) Validation Loss: %.2f Accuracy: %.2f%%' % (
-            str(train_step_fn.step).rjust(6, '0'), FLAGS.val_num_batch*FLAGS.batch_size, ave_val_loss, ave_val_acc * 100))
-            # print("filename %s" % filenames_l)
-            # print("video_name %s" % vnames_l)
+        # if train_step_fn.step % FLAGS.val_freq == 0:
+        #
+        #     val_acc_l = []
+        #     val_loss_l = []
+        #     # filenames_l = []
+        #     # vnames_l = []
+        #     for i in range(FLAGS.val_num_batch):
+        #         # val_acc, val_loss, filenames, vnames = session.run([train_step_fn.valid_accuracy, valid_loss, train_step_fn.fnames, train_step_fn.vnames])
+        #         val_acc, val_loss = session.run(
+        #             [train_step_fn.valid_accuracy, valid_loss])
+        #         val_acc_l.append(val_acc)
+        #         val_loss_l.append(val_loss)
+        #         # filenames_l.append(filenames)
+        #         # vnames_l.append(vnames)
+        #
+        #     ave_val_acc = sum(val_acc_l) / len(val_acc_l)
+        #     ave_val_loss = sum(val_loss_l) / len(val_loss_l)
+        #     print('Step %s - Average(item:%d) Validation Loss: %.2f Accuracy: %.2f%%' % (
+        #     str(train_step_fn.step).rjust(6, '0'), FLAGS.val_num_batch*FLAGS.batch_size, ave_val_loss, ave_val_acc * 100))
+        #     # print("filename %s" % filenames_l)
+        #     # print("video_name %s" % vnames_l)
 
         train_step_fn.step += 1
         return [total_loss, should_stop]
 
     train_step_fn.step = 0
     train_step_fn.train_accuracy = train_accuracy
-    train_step_fn.valid_accuracy = valid_accuracy
+    # train_step_fn.valid_accuracy = valid_accuracy
     # train_step_fn.fnames = valid_fnames
     # train_step_fn.vnames = valid_vnames
 
