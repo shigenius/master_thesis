@@ -1,3 +1,7 @@
+MAX_STEP=10000
+EVAL_FREQ=1000
+NUM_ROOP=MAX_STEP/EVAL_FREQ
+
 # python train.py --num_batches 1000 --batch_size 20;
 # python evaluate.py --checkpoint_name model.ckpt-1000>hoge.txt;
 # TEXT=$(cat hoge.txt | grep "num of record")
@@ -21,15 +25,16 @@ if [ $# -eq 1 ]; then
   MESSEGE=$1
   echo "messege:"$MESSEGE
 else
-  MESSEGE=" "
+  MESSEGE=""
 fi
 
-for i in `seq 10`
+for i in `seq ${NUM_ROOP}`
 do
+  NUM_BATCHES=i*EVAL_FREQ
   echo "Run Train"$i;
-  python train.py --num_batches 1000 --batch_size 20;
+  python train.py --num_batches ${NUM_BATCHES} --batch_size 20;
   echo "Run Test"$i;
-  python evaluate.py --eval_log_name ${MESSEGE}$i > hoge.txt;
+  python evaluate.py --eval_log_name ${MESSEGE}${NUM_BATCHES} > hoge.txt;
   TEXT_=$(cat hoge.txt | grep "num of record");
   TEXT=$MESSEGE' '$i'\nTrain and evaluation was DONE! \n'$TEXT_;
 
