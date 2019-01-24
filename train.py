@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from datasets import shisa_instances
-from model import shigenet, load_batch
+from model import shigenet, shigenet2, load_batch
 
 slim = tf.contrib.slim
 
@@ -40,8 +40,8 @@ def main(args):
         is_training=False)
 
     # run the image through the model
-    train_predictions = shigenet(train_images, train_crops, train_dataset.num_classes, is_training=True, reuse=None)
-    valid_predictions = shigenet(valid_images, valid_crops, valid_dataset.num_classes, is_training=False, reuse=True)
+    train_predictions = shigenet2(train_images, train_crops, train_dataset.num_classes, is_training=True, reuse=None)
+    valid_predictions = shigenet2(valid_images, valid_crops, valid_dataset.num_classes, is_training=False, reuse=True)
 
     # get the cross-entropy loss
     train_one_hot_labels = slim.one_hot_encoding(

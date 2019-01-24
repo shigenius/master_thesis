@@ -18,7 +18,7 @@ LINK_NAMES='1'
 # eval ${curl}
 
 
-for ((i=0 ; i<10 ; i++))
+for i in `seq 10`
 do
   python train.py --num_batches 1000 --batch_size 20;
   python evaluate.py --checkpoint_name model.ckpt-1000 > hoge.txt;
