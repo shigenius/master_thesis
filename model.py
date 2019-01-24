@@ -88,7 +88,8 @@ def shigenet2(images, crops, num_classes, dropout=0.5, is_training=False, reuse=
                 net_l = slim.conv2d(net_l, 1024, [1, 1], padding='VALID', scope='pw-conv')
                 net_l = slim.conv2d(net_l, 500, [1, 1], padding='VALID', scope='pw-conv2')
                 net_l = slim.conv2d(net_l, num_classes, [1, 1], padding='VALID', scope='pw-conv3')
-                # net_l = tf.divide(net_l, tf.arg_max(net_l)) # 0~1 norm
+                net_l = slim.flatten(net_l, scope='flatten')
+                net_l = slim.softmax(net_l)
                 print(net_l)
 
             with tf.variable_scope('branch_orig') as scope:
@@ -107,12 +108,14 @@ def shigenet2(images, crops, num_classes, dropout=0.5, is_training=False, reuse=
                 net_g = slim.conv2d(net_g, 1024, [1, 1], padding='VALID', scope='pw-conv')
                 net_g = slim.conv2d(net_g, 500, [1, 1], padding='VALID', scope='pw-conv2')
                 net_g = slim.conv2d(net_g, num_classes, [1, 1], padding='VALID', scope='pw-conv3')
+                net_g = slim.flatten(net_g, scope='flatten')
+                net_g = slim.softmax(net_g)
                 print(net_g)
 
             with tf.variable_scope('logit') as scope:
                 # net = tf.concat([net_l, net_g], 3)
                 net = tf.add(net_l, net_g) # element-wise add
-                net = slim.flatten(net, scope='flatten')
+                # net = slim.flatten(net, scope='flatten')
                 # net = slim.fully_connected(net, 1000, scope='fc1')
                 # net = slim.dropout(net, dropout, scope='dropout1')
                 # net = slim.fully_connected(net, 500, scope='fc2')
