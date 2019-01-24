@@ -15,7 +15,7 @@ flags.DEFINE_string('log_dir', './log/train',
                     'Directory with the log data.')
 flags.DEFINE_string('extractor_ckpt', '/Users/shigetomi/Downloads/vgg_16.ckpt',
                     '')
-flags.DEFINE_integer('val_freq', 500, 'validation freq per step')
+flags.DEFINE_integer('val_freq', 1000, 'validation freq per step')
 flags.DEFINE_integer('val_num_batch', 20, 'num of running validation per step')
 
 FLAGS = flags.FLAGS
@@ -93,7 +93,7 @@ def main(args):
         if train_step_fn.step % 1 == 0:
             train_acc = session.run(train_step_fn.train_accuracy)
             # filenames = session.run(train_step_fn.fnames)
-            print('Step %s - Loss: %.2f Accuracy: %.2f%%' % (
+            print('Step %s - Loss: %.4f Accuracy: %.2f%%' % (
             str(train_step_fn.step).rjust(6, '0'), total_loss, train_acc * 100))
             # print("filename %s" % filenames)
 

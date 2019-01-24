@@ -43,7 +43,7 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
   Returns:
     A preprocessed image.
   """
-  tf.summary.image('image_orig', image[tf.newaxis, :], 1)
+  # tf.summary.image('image_orig', image[tf.newaxis, :], 1)
 
   cropped = tf.squeeze(tf.image.crop_and_resize(image[tf.newaxis, :], bbox, box_ind=[0], crop_size=[output_height, output_width]), [0])
   # # アス比を保ったまま，縦横幅の小さい方に合わせてcropする
@@ -52,6 +52,7 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
 
   # augmentations
   if is_training:
+    # color augmentations
     image   = tf.image.random_brightness(image, max_delta=63, seed=seed1)
     cropped = tf.image.random_brightness(cropped, max_delta=63, seed=seed1)
     image   = tf.image.random_saturation(image, lower=0.5, upper=1.5, seed=seed2)
@@ -60,8 +61,18 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     cropped = tf.image.random_hue(cropped, max_delta=0.2, seed=seed3)
     image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed4)
     cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
+
     image = gaussian_noise_layer(image, .2)
     cropped = gaussian_noise_layer(cropped, .2)
+
+  # tf.nn.local_response_normalization(
+  #     input,
+  #     depth_radius=5,
+  #     bias=1,
+  #     alpha=1,
+  #     beta=0.5,
+  #     name=None
+  # )
 
   # Subtract off the mean and divide by the variance of the pixels.
   # image = tf.image.per_image_standardization(image)
