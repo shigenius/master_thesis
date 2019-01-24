@@ -17,8 +17,8 @@ LINK_NAMES='1'
 #     ${URL}"
 # eval ${curl}
 
-if [$# -ne 2]; then 
-  MESSEGE=$2
+if [ $# -eq 1 ]; then 
+  MESSEGE=$1
   echo "messege:"$MESSEGE
 else
   MESSEGE=" "
