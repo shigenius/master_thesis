@@ -65,8 +65,9 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     image = gaussian_noise_layer(image, .2)
     cropped = gaussian_noise_layer(cropped, .2)
 
-    image = tf.nn.lrn(image, 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75)
-    cropped = tf.nn.lrn(cropped, 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75)
+    image = tf.squeeze(tf.nn.lrn(image[tf.newaxis, :], 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75), [0])
+    cropped = tf.squeeze(tf.nn.lrn(cropped[tf.newaxis, :], 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75), [0])
+
   # tf.nn.local_response_normalization(
   #     input,
   #     depth_radius=5,
@@ -81,8 +82,8 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
   # cropped = tf.image.per_image_standardization(cropped)
 
   # #  visualize on tensorboard
-  tf.summary.image('image', image[tf.newaxis, :], 1)
-  tf.summary.image('crop', cropped[tf.newaxis, :], 1)
+  #tf.summary.image('image', image[tf.newaxis, :], 1)
+  #tf.summary.image('crop', cropped[tf.newaxis, :], 1)
 
   # normalize -1~1
   image = tf.to_float(image)
