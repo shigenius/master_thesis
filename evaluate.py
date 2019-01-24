@@ -23,8 +23,6 @@ flags.DEFINE_string('log_dir', './log/eval',
                     'Directory with the log data.')
 flags.DEFINE_string('checkpoint_dir', './log/train',
                     'Directory with the model checkpoint data.')
-flags.DEFINE_string('checkpoint_name', 'model.ckpt-134052',
-                    '')
 flags.DEFINE_string('labelfile_name', 'pascal_label_map.pbtxt',
                     'label file name that discribed pascal voc')
 flags.DEFINE_string('eval_log_name', 'eval.csv',
@@ -45,7 +43,7 @@ def main(args):
     label_name_to_id = label_map_util.get_label_map_dict(os.path.join(FLAGS.data_dir, FLAGS.labelfile_name))
     label_id_to_name = {items[1]:items[0] for items in label_name_to_id.items()}
     # eval log
-    f = open(os.path.join(FLAGS.log_dir, FLAGS.eval_log_name), 'w')
+    f = open(os.path.join(FLAGS.log_dir, +FLAGS.eval_log_name), 'w')
     writer = csv.writer(f, lineterminator='\n')
     writer.writerow(['file_path', 'source_video', 'gt',  'prediction', 'is_correct_label', 'running_time',])
 

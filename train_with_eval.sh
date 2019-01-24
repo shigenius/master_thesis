@@ -26,18 +26,20 @@ fi
 
 for i in `seq 10`
 do
+  echo "Run Train"$i;
   python train.py --num_batches 1000 --batch_size 20;
-  python evaluate.py --checkpoint_name model.ckpt-1000 > hoge.txt;
-  TEXT_=$(cat hoge.txt | grep "num of record")
-  TEXT=$MESSEGE' '$i'\nTrain and evaluation was DONE! \n'$TEXT_
+  echo "Run Test"$i;
+  python evaluate.py --eval_log_name ${MESSEGE}$i > hoge.txt;
+  TEXT_=$(cat hoge.txt | grep "num of record");
+  TEXT=$MESSEGE' '$i'\nTrain and evaluation was DONE! \n'$TEXT_;
 
   # post
   curl="curl -X POST --data '{ \
       \"text\": \"${TEXT}\" \
       ,\"username\": \"${USERNAME}\" \
       ,\"link_names\" : ${LINK_NAMES}}' \
-      ${URL}"
-  eval ${curl}
+      ${URL}";
+  eval ${curl};
 
 done
 
