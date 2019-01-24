@@ -62,9 +62,9 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
 
 
-    # # Subtract off the mean and divide by the variance of the pixels.
-  # image = tf.image.per_image_whitening(image)
-  # cropped = tf.image.per_image_whitening(cropped)
+  # Subtract off the mean and divide by the variance of the pixels.
+  image = tf.image.per_image_whitening(image)
+  cropped = tf.image.per_image_whitening(cropped)
 
   # normalize -1~1
   image = tf.to_float(image)
