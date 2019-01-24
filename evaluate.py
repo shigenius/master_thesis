@@ -43,7 +43,7 @@ def main(args):
     label_name_to_id = label_map_util.get_label_map_dict(os.path.join(FLAGS.data_dir, FLAGS.labelfile_name))
     label_id_to_name = {items[1]:items[0] for items in label_name_to_id.items()}
     # eval log
-    f = open(os.path.join(FLAGS.log_dir, +FLAGS.eval_log_name), 'w')
+    f = open(os.path.join(FLAGS.log_dir, FLAGS.eval_log_name), 'w')
     writer = csv.writer(f, lineterminator='\n')
     writer.writerow(['file_path', 'source_video', 'gt',  'prediction', 'is_correct_label', 'running_time',])
 

@@ -1,6 +1,6 @@
 MAX_STEP=10000
 EVAL_FREQ=1000
-NUM_ROOP=MAX_STEP/EVAL_FREQ
+NUM_ROOP=`expr $MAX_STEP / $EVAL_FREQ`
 
 # python train.py --num_batches 1000 --batch_size 20;
 # python evaluate.py --checkpoint_name model.ckpt-1000>hoge.txt;
@@ -30,11 +30,12 @@ fi
 
 for i in `seq ${NUM_ROOP}`
 do
-  NUM_BATCHES=i*EVAL_FREQ
+  NUM_BATCHES=`expr $i \* $EVAL_FREQ`
   echo "Run Train"$i;
   python train.py --num_batches ${NUM_BATCHES} --batch_size 20;
   echo "Run Test"$i;
-  python evaluate.py --eval_log_name ${MESSEGE}${NUM_BATCHES} > hoge.txt;
+  EVAL_LOG_NAME=${MESSEGE}"_"${NUM_BATCHES}".csv"
+  python evaluate.py --eval_log_name ${EVAL_LOG_NAME} > hoge.txt;
   TEXT_=$(cat hoge.txt | grep "num of record");
   TEXT=$MESSEGE' '$i'\nTrain and evaluation was DONE! \n'$TEXT_;
 
