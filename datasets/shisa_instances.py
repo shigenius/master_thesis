@@ -18,7 +18,7 @@ _FILE_PATTERN = 'VOC2007-%s.tfrecord'
 
 _SPLITS_TO_SIZES = {'train': 6000, 'val': 6000, 'test': 6000}
 
-_NUM_CLASSES = 9
+_NUM_CLASSES = 10
 
 _ITEMS_TO_DESCRIPTIONS = {
     'image': 'A [224 x 224 x 3] color image.',
