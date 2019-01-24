@@ -28,6 +28,10 @@ seed2 = random.randint(0, 1000000)
 seed3 = random.randint(0, 1000000)
 seed4 = random.randint(0, 1000000)
 
+def gaussian_noise_layer(input_layer, std):
+    noise = tf.random_normal(shape=tf.shape(input_layer), mean=0.0, stddev=std, dtype=tf.float32)
+    return input_layer + noise
+
 def preprocess_image(image, bbox, output_height, output_width, is_training):
   """Preprocesses the given image.
   Args:
@@ -46,10 +50,6 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
   min_size = tf.reduce_min(tf.shape(image)[:-1])
   image = tf.image.resize_images(tf.image.resize_image_with_crop_or_pad(image, min_size, min_size), [output_height, output_width])
 
-  # #  visualize on tensorboard
-  # tf.summary.image('image', image[tf.newaxis, :], 1)
-  # tf.summary.image('crop', cropped[tf.newaxis, :], 1)
-
   # augmentations
   if is_training:
     image   = tf.image.random_brightness(image, max_delta=63, seed=seed1)
@@ -60,11 +60,16 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     cropped = tf.image.random_hue(cropped, max_delta=0.2, seed=seed3)
     image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed4)
     cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
-
+    image = gaussian_noise_layer(image, .2)
+    cropped = gaussian_noise_layer(cropped, .2)
 
   # Subtract off the mean and divide by the variance of the pixels.
-  image = tf.image.per_image_standardization(image)
-  cropped = tf.image.per_image_standardization(cropped)
+  # image = tf.image.per_image_standardization(image)
+  # cropped = tf.image.per_image_standardization(cropped)
+
+  # #  visualize on tensorboard
+  tf.summary.image('image', image[tf.newaxis, :], 1)
+  tf.summary.image('crop', cropped[tf.newaxis, :], 1)
 
   # normalize -1~1
   image = tf.to_float(image)
