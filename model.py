@@ -135,17 +135,17 @@ def shigenet3(images, crops, num_classes, dropout=0.5, is_training=False, reuse=
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool1')
                 net_l = slim.repeat(net_l, 2, slim.conv2d, 128, [3, 3], scope='conv2')
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool2')
-                net_l = slim.repeat(net_l, 3, slim.conv2d, 256, [3, 3], scope='conv3')
+                net_l = slim.repeat(net_l, 2, slim.conv2d, 256, [3, 3], scope='conv3')
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool3')
-                net_l = slim.repeat(net_l, 3, slim.conv2d, 512, [3, 3], scope='conv4')
+                net_l = slim.repeat(net_l, 2, slim.conv2d, 512, [3, 3], scope='conv4')
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool4')
-                net_l = slim.repeat(net_l, 3, slim.conv2d, 512, [3, 3], scope='conv5')
+                net_l = slim.repeat(net_l, 1, slim.conv2d, 512, [3, 3], scope='conv5')
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool5')
                 net_l = slim.conv2d(net_l, 2048, [7, 7], padding="VALID", scope='fc6')
                 net_l = slim.dropout(net_l, dropout, is_training=is_training,
                                    scope='dropout6')
 
-                net_l = slim.conv2d(net_l, 2048, [1, 1], padding='VALID', scope='pw-conv')
+                net_l = slim.conv2d(net_l, 1024, [1, 1], padding='VALID', scope='pw-conv')
                 net_l = slim.dropout(net_l, dropout, is_training=is_training,
                                      scope='dropout7')
                 net_l = slim.conv2d(net_l, 500, [1, 1], padding='VALID', scope='pw-conv2')
@@ -158,17 +158,17 @@ def shigenet3(images, crops, num_classes, dropout=0.5, is_training=False, reuse=
                 net_g = slim.max_pool2d(net_g, [2, 2], scope='pool1')
                 net_g = slim.repeat(net_g, 2, slim.conv2d, 128, [3, 3], scope='conv2')
                 net_g = slim.max_pool2d(net_g, [2, 2], scope='pool2')
-                net_g = slim.repeat(net_g, 3, slim.conv2d, 256, [3, 3], scope='conv3')
+                net_g = slim.repeat(net_g, 2, slim.conv2d, 256, [3, 3], scope='conv3')
                 net_g = slim.max_pool2d(net_g, [2, 2], scope='pool3')
-                net_g = slim.repeat(net_g, 3, slim.conv2d, 512, [3, 3], scope='conv4')
+                net_g = slim.repeat(net_g, 2, slim.conv2d, 512, [3, 3], scope='conv4')
                 net_g = slim.max_pool2d(net_g, [2, 2], scope='pool4')
-                net_g = slim.repeat(net_g, 3, slim.conv2d, 512, [3, 3], scope='conv5')
+                net_g = slim.repeat(net_g, 1, slim.conv2d, 512, [3, 3], scope='conv5')
                 net_g = slim.max_pool2d(net_g, [2, 2], scope='pool5')
                 net_g = slim.conv2d(net_g, 2048, [7, 7], padding="VALID", scope='fc6')
                 net_g = slim.dropout(net_g, dropout, is_training=is_training,
                                      scope='dropout6')
 
-                net_g = slim.conv2d(net_g, 2048, [1, 1], padding='VALID', scope='pw-conv')
+                net_g = slim.conv2d(net_g, 1024, [1, 1], padding='VALID', scope='pw-conv')
                 net_g = slim.dropout(net_g, dropout, is_training=is_training,
                                      scope='dropout7')
                 net_g = slim.conv2d(net_g, 500, [1, 1], padding='VALID', scope='pw-conv2')
