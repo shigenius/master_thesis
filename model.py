@@ -70,6 +70,9 @@ def shigenet(images, crops, num_classes, dropout=0.5, is_training=False, reuse=N
 
 def shigenet2(images, crops, num_classes, dropout=0.5, is_training=False, reuse=None):
     with tf.variable_scope('shigenet2', reuse=reuse) as scope:
+        #  visualize on tensorboard
+        tf.summary.image('images', images, 1)
+        tf.summary.image('crops', crops, 1)
         with slim.arg_scope([slim.conv2d, slim.fully_connected],
                             activation_fn=tf.nn.relu):
             with tf.variable_scope('branch_crop') as scope:
