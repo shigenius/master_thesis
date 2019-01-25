@@ -69,8 +69,8 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed4)
     cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
 
-    tx = tf.random_normal(shape=[1],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed2) # 正規分布的なランダム値
-    ty = tf.random_normal(shape=[1],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed2)
+    tx = tf.random_normal(shape=[],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed2) # 正規分布的なランダム値
+    ty = tf.random_normal(shape=[],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed2)
     image = tf_image_translate(image, tx=tx, ty=ty)
     cropped = tf_image_translate(cropped, tx=tx, ty=ty)
 
