@@ -32,6 +32,13 @@ def gaussian_noise_layer(input_layer, std):
     noise = tf.random_normal(shape=tf.shape(input_layer), mean=0.0, stddev=std, dtype=tf.float32)
     return input_layer + noise
 
+
+def tf_image_translate(images, tx, ty, interpolation='NEAREST'):
+  # got these parameters from solving the equations for pixel translations
+  # on https://www.tensorflow.org/api_docs/python/tf/contrib/image/transform
+  transforms = [1, 0, -tx, 0, 1, -ty, 0, 0]
+  return tf.contrib.image.transform(images, transforms, interpolation)
+
 def preprocess_image(image, bbox, output_height, output_width, is_training):
   """Preprocesses the given image.
   Args:
@@ -65,8 +72,10 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     image = gaussian_noise_layer(image, .2)
     cropped = gaussian_noise_layer(cropped, .2)
 
-    image = tf.squeeze(tf.nn.lrn(image[tf.newaxis, :], 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75), [0])
-    cropped = tf.squeeze(tf.nn.lrn(cropped[tf.newaxis, :], 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75), [0])
+    image = tf_image_translate(image, tx=-5, ty=10)
+    cropped = tf_image_translate(cropped, tx=-5, ty=10)
+  # image = tf.squeeze(tf.nn.lrn(image[tf.newaxis, :], 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75), [0])
+  # cropped = tf.squeeze(tf.nn.lrn(cropped[tf.newaxis, :], 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75), [0])
 
   # tf.nn.local_response_normalization(
   #     input,

@@ -37,7 +37,7 @@ do
   EVAL_LOG_NAME=${MESSEGE}"_"${NUM_BATCHES}".csv"
   python evaluate.py --eval_log_name ${EVAL_LOG_NAME} > hoge.txt;
   TEXT_=$(cat hoge.txt | grep "num of record");
-  TEXT=$MESSEGE' '$i'\nTrain and evaluation was DONE! \n'$TEXT_;
+  TEXT=$MESSEGE' '$i'\nTrain and evaluation has DONE! \n'$TEXT_;
 
   # post
   curl="curl -X POST --data '{ \
