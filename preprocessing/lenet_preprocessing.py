@@ -75,12 +75,12 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     cropped = gaussian_noise_layer(cropped, .2)
 
     # spatial augments
-    tx = tf.random_normal(shape=[],mean=0.0, stddev=40.0,dtype=tf.float32, seed=seed2) # 正規分布的なランダム値
-    ty = tf.random_normal(shape=[],mean=0.0, stddev=40.0,dtype=tf.float32, seed=seed3)
+    tx = tf.random_normal(shape=[],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed2) # 正規分布的なランダム値
+    ty = tf.random_normal(shape=[],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed3)
     image = tf_image_translate(image, tx=tx, ty=ty)
     cropped = tf_image_translate(cropped, tx=tx, ty=ty)
 
-    degrees = tf.random_normal(shape=[],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed5)
+    degrees = tf.random_normal(shape=[],mean=0.0, stddev=10.0,dtype=tf.float32, seed=seed5)
     image = tf.contrib.image.rotate(image, degrees * math.pi / 180, interpolation='BILINEAR')
     cropped = tf.contrib.image.rotate(cropped, degrees * math.pi / 180, interpolation='BILINEAR')
 
