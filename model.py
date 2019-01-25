@@ -131,10 +131,10 @@ def shigenet3(images, crops, num_classes, keep_prob=1.0, is_training=False, reus
 
 
         with tf.variable_scope('branch_crop') as scope:
-            net_l = shigenet3_block(crops, num_classes=num_classes, dropout=keep_prob, is_training=is_training)
+            net_l = shigenet3_block(crops, num_classes=num_classes, keep_prob=keep_prob, is_training=is_training)
 
         with tf.variable_scope('branch_orig') as scope:
-            net_g = shigenet3_block(images, num_classes=num_classes, dropout=keep_prob, is_training=is_training)
+            net_g = shigenet3_block(images, num_classes=num_classes, keep_prob=keep_prob, is_training=is_training)
 
         with tf.variable_scope('logit') as scope:
             net = tf.add(net_l, net_g) # element-wise add
