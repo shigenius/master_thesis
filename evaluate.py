@@ -41,10 +41,14 @@ def get_latest_ckpt(ckpt_dir):
     return latest_ckpt_path
 
 def get_best_score(ckpt_dir):
-    pattern = r'[0-9]*'
+    pattern = r'[0-9].*\.[0-9].*'
     hoge = [re.findall(pattern, i) for i in glob.glob(os.path.join(ckpt_dir, "hall-of-fam/*"))]
-    best_score = max([int([j for j in i if j != ''][0]) for i in hoge])
-    best_score =  best_score / 100 if best_score is not None else 0
+    if hoge != []:
+        best_score = max([float([j for j in i if j != ''][0]) for i in hoge])
+        best_score =  best_score / 100
+
+    else:
+        best_score = 0.0
     return best_score
 
 def main(args):
