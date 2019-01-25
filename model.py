@@ -125,16 +125,16 @@ def shigenet2(images, crops, num_classes, dropout=0.5, is_training=False, reuse=
                 # show_variables()
         return net
 
-def shigenet3(images, crops, num_classes, dropout=0.8, is_training=False, reuse=None):
+def shigenet3(images, crops, num_classes, keep_prob=1.0, is_training=False, reuse=None):
     # heavy network!
     with tf.variable_scope('shigenet3', reuse=reuse) as scope:
 
 
         with tf.variable_scope('branch_crop') as scope:
-            net_l = shigenet3_block(crops, num_classes=num_classes, dropout=dropout, is_training=is_training)
+            net_l = shigenet3_block(crops, num_classes=num_classes, dropout=keep_prob, is_training=is_training)
 
         with tf.variable_scope('branch_orig') as scope:
-            net_g = shigenet3_block(images, num_classes=num_classes, dropout=dropout, is_training=is_training)
+            net_g = shigenet3_block(images, num_classes=num_classes, dropout=keep_prob, is_training=is_training)
 
         with tf.variable_scope('logit') as scope:
             net = tf.add(net_l, net_g) # element-wise add
@@ -143,7 +143,7 @@ def shigenet3(images, crops, num_classes, dropout=0.8, is_training=False, reuse=
         return net
 
 
-def shigenet3_block(input, num_classes, dropout=0.8, is_training=False):
+def shigenet3_block(input, num_classes, keep_prob=1.0, is_training=False):
     # input 224x224x3 images tensor
     # return 1x1xnum_classes tensor
     with slim.arg_scope([slim.conv2d, slim.fully_connected], padding='VALID',
@@ -156,15 +156,15 @@ def shigenet3_block(input, num_classes, dropout=0.8, is_training=False):
         net = slim.max_pool2d(net, [2, 2], scope='pool3')
         net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv4')
         net = slim.max_pool2d(net, [2, 2], scope='pool4')
-        net = slim.repeat(net, 3, slim.conv2d, 1024, [3, 3], scope='conv5')
+        net = slim.repeat(net, 3, slim.conv2d, 2048, [3, 3], scope='conv5')
         net = slim.max_pool2d(net, [2, 2], scope='pool5')
 
         net = slim.conv2d(net, 1024, [1, 1], padding='VALID', scope='pw-conv')
-        net = slim.dropout(net, dropout, is_training=is_training,
-                           scope='dropout1')
+        # net = slim.dropout(net, keep_prob, is_training=is_training,
+        #                    scope='dropout1')
         net = slim.conv2d(net, 500, [1, 1], padding='VALID', scope='pw-conv2')
-        net = slim.dropout(net, dropout, is_training=is_training,
-                           scope='dropout2')
+        # net = slim.dropout(net, keep_prob, is_training=is_training,
+        #                    scope='dropout2')
         net = slim.conv2d(net, num_classes, [1, 1], padding='VALID', scope='pw-conv3')
 
         return net
