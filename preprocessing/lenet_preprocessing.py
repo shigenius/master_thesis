@@ -69,11 +69,15 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed4)
     cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
 
+    tx = tf.random_normal(shape=[1],mean=0.0, stddev=20.0,dtype=tf.float32) # 正規分布的なランダム値
+    ty = tf.random_normal(shape=[1],mean=0.0, stddev=20.0,dtype=tf.float32)
+    image = tf_image_translate(image, tx=tx, ty=ty, seed=seed2)
+    cropped = tf_image_translate(cropped, tx=tx, ty=ty, seed=seed2)
+
     image = gaussian_noise_layer(image, .2)
     cropped = gaussian_noise_layer(cropped, .2)
 
-    image = tf_image_translate(image, tx=-5, ty=10)
-    cropped = tf_image_translate(cropped, tx=-5, ty=10)
+
   # image = tf.squeeze(tf.nn.lrn(image[tf.newaxis, :], 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75), [0])
   # cropped = tf.squeeze(tf.nn.lrn(cropped[tf.newaxis, :], 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75), [0])
 
@@ -91,8 +95,8 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
   # cropped = tf.image.per_image_standardization(cropped)
 
   # #  visualize on tensorboard
-  #tf.summary.image('image', image[tf.newaxis, :], 1)
-  #tf.summary.image('crop', cropped[tf.newaxis, :], 1)
+  tf.summary.image('image', image[tf.newaxis, :], 1)
+  tf.summary.image('crop', cropped[tf.newaxis, :], 1)
 
   # normalize -1~1
   image = tf.to_float(image)
