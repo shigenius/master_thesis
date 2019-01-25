@@ -44,7 +44,7 @@ def get_best_score(ckpt_dir):
     pattern = r'[0-9]*'
     hoge = [re.findall(pattern, i) for i in glob.glob(os.path.join(ckpt_dir, "hall-of-fam/*"))]
     best_score = max([int([j for j in i if j != ''][0]) for i in hoge])
-    best_score =  best_score / 100 if best_score is None else 0
+    best_score =  best_score / 100 if best_score is not None else 0
     return best_score
 
 def main(args):
@@ -59,84 +59,86 @@ def main(args):
 
     ckpt_path = get_latest_ckpt(FLAGS.checkpoint_dir)
     print("ckpt_path:", ckpt_path)
+    #
+    # # load the dataset
+    # dataset = shisa_instances.get_split('test', FLAGS.data_dir)
+    #
+    # # load batch of dataset
+    # images, crops, labels, bboxes, filenames, videonames = load_batch(
+    #     dataset,
+    #     1,
+    #     height=shigenet.default_input_size,
+    #     width=shigenet.default_input_size,
+    #     is_training=False,
+    #     shuffle=False)
+    #
+    # # run the image through the model
+    # predictions = shigenet(images, crops, dataset.num_classes, is_training=False, reuse=None)
+    # predictions1D = tf.to_int64(tf.argmax(predictions, 1))
+    #
+    # names_to_values, names_to_updates = slim.metrics.aggregate_metric_map({
+    #     "accuracy": slim.metrics.streaming_accuracy(predictions1D, labels),
+    #     # "mse": slim.metrics.streaming_mean_squared_error(predictions, labels),
+    #     'precision': slim.metrics.streaming_precision(predictions1D, labels)
+    # })
+    # one_hot_labels = slim.one_hot_encoding(
+    #     labels,
+    #     dataset.num_classes)
+    #
+    # accuracy = slim.metrics.accuracy(
+    #     tf.argmax(predictions, 1),
+    #     tf.argmax(one_hot_labels, 1))  # ... or whatever metrics needed
+    #
+    # # initial_op = tf.group(
+    # #     tf.global_variables_initializer(),
+    # #     tf.local_variables_initializer())
+    #
+    # variables_to_restore = slim.get_model_variables()
+    # restorer = tf.train.Saver(variables_to_restore)
+    #
+    # print("run evaluating.")
+    # with tf.Session() as sess:
+    #     # sess.run(tf.global_variables_initializer())
+    #     sess.run(tf.local_variables_initializer())
+    #     restorer.restore(sess, ckpt_path)
+    #     print("model restored from:", ckpt_path)
+    #
+    #     # adding these 2 lines fixed the hang forever problem
+    #     coord = tf.train.Coordinator()
+    #     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+    #
+    #     num_record = len(list(tf.python_io.tf_record_iterator(dataset.data_sources)))
+    #     # print("num of record:", num_record)
+    #     num_correct = 0
+    #     for batch in range(num_record):
+    #         start_time = time.time()
+    #         acc, label, pred, fname, vname = sess.run([accuracy, labels, predictions1D, filenames, videonames])
+    #         elapsed_time = time.time() - start_time
+    #
+    #         label = label_id_to_name[label.tolist()[0]]
+    #         pred = label_id_to_name[pred.tolist()[0]]
+    #         print(batch, acc, fname, vname, label, pred)
+    #         is_correct = True if label == pred else False
+    #         writer.writerow([fname[0].decode('utf-8'), label+"/"+vname[0].decode('utf-8'), label, pred, is_correct, elapsed_time])
+    #
+    #         if is_correct is True:
+    #             num_correct += 1
+    num_correct = 3368
+    num_record = 5006
+    mean_acc = round(num_correct / num_record, 4)
+    print("num of record:", num_record, "num of correct:", num_correct, "Acc:", mean_acc)
 
-    # load the dataset
-    dataset = shisa_instances.get_split('test', FLAGS.data_dir)
 
-    # load batch of dataset
-    images, crops, labels, bboxes, filenames, videonames = load_batch(
-        dataset,
-        1,
-        height=shigenet.default_input_size,
-        width=shigenet.default_input_size,
-        is_training=False,
-        shuffle=False)
-
-    # run the image through the model
-    predictions = shigenet(images, crops, dataset.num_classes, is_training=False, reuse=None)
-    predictions1D = tf.to_int64(tf.argmax(predictions, 1))
-
-    names_to_values, names_to_updates = slim.metrics.aggregate_metric_map({
-        "accuracy": slim.metrics.streaming_accuracy(predictions1D, labels),
-        # "mse": slim.metrics.streaming_mean_squared_error(predictions, labels),
-        'precision': slim.metrics.streaming_precision(predictions1D, labels)
-    })
-    one_hot_labels = slim.one_hot_encoding(
-        labels,
-        dataset.num_classes)
-
-    accuracy = slim.metrics.accuracy(
-        tf.argmax(predictions, 1),
-        tf.argmax(one_hot_labels, 1))  # ... or whatever metrics needed
-
-    # initial_op = tf.group(
-    #     tf.global_variables_initializer(),
-    #     tf.local_variables_initializer())
-
-    variables_to_restore = slim.get_model_variables()
-    restorer = tf.train.Saver(variables_to_restore)
-
-    print("run evaluating.")
-    with tf.Session() as sess:
-        # sess.run(tf.global_variables_initializer())
-        sess.run(tf.local_variables_initializer())
-        restorer.restore(sess, ckpt_path)
-        print("model restored from:", ckpt_path)
-
-        # adding these 2 lines fixed the hang forever problem
-        coord = tf.train.Coordinator()
-        threads = tf.train.start_queue_runners(sess=sess, coord=coord)
-
-        num_record = len(list(tf.python_io.tf_record_iterator(dataset.data_sources)))
-        # print("num of record:", num_record)
-        num_correct = 0
-        for batch in range(num_record):
-            start_time = time.time()
-            acc, label, pred, fname, vname = sess.run([accuracy, labels, predictions1D, filenames, videonames])
-            elapsed_time = time.time() - start_time
-
-            label = label_id_to_name[label.tolist()[0]]
-            pred = label_id_to_name[pred.tolist()[0]]
-            print(batch, acc, fname, vname, label, pred)
-            is_correct = True if label == pred else False
-            writer.writerow([fname[0].decode('utf-8'), label+"/"+vname[0].decode('utf-8'), label, pred, is_correct, elapsed_time])
-
-            if is_correct is True:
-                num_correct += 1
-
-        mean_acc = num_correct / num_record
-        print("num of record:", num_record, "num of correct:", num_correct, "Acc:", mean_acc)
-
-
-        # スコアが高かったらckptその他を保存する
-        if mean_acc > get_best_score(FLAGS.checkpoint_dir):
-            save_dir = os.path.join(FLAGS.checkpoint_dir, "hall-of-fam", "ac"+str(mean_acc*100))
-            os.mkdirs(save_dir)
-            save_files = glob.glob(ckpt_path+"/*")
-            save_files.append("graph.pbtxt")
-            save_files.append("checkpoint")
-            for i in save_files:
-                shutil.copy2(i, save_dir)
+    # スコアが高かったらckptその他を保存する
+    if mean_acc > get_best_score(FLAGS.checkpoint_dir):
+        save_dir = os.path.join(FLAGS.checkpoint_dir, "hall-of-fam", "ac"+str(mean_acc*100))
+        print("save_dir:", save_dir)
+        os.mkdirs(save_dir)
+        save_files = glob.glob(ckpt_path+"/*")
+        save_files.append("graph.pbtxt")
+        save_files.append("checkpoint")
+        for i in save_files:
+            shutil.copy2(i, save_dir)
 
 
     print("process finished")
