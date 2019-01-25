@@ -22,6 +22,7 @@ import tensorflow as tf
 
 slim = tf.contrib.slim
 
+import math
 import random
 seed1 = random.randint(0, 1000000)
 seed2 = random.randint(0, 1000000)
@@ -69,13 +70,17 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed4)
     cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
 
-    tx = tf.random_normal(shape=[],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed2) # 正規分布的なランダム値
-    ty = tf.random_normal(shape=[],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed2)
+    image = gaussian_noise_layer(image, .2)
+    cropped = gaussian_noise_layer(cropped, .2)
+
+    # spatial augments
+    tx = tf.random_normal(shape=[],mean=0.0, stddev=40.0,dtype=tf.float32, seed=seed2) # 正規分布的なランダム値
+    ty = tf.random_normal(shape=[],mean=0.0, stddev=40.0,dtype=tf.float32, seed=seed3)
     image = tf_image_translate(image, tx=tx, ty=ty)
     cropped = tf_image_translate(cropped, tx=tx, ty=ty)
 
-    image = gaussian_noise_layer(image, .2)
-    cropped = gaussian_noise_layer(cropped, .2)
+    image = tf.contrib.image.rotate(image, 10 * math.pi / 180, interpolation='BILINEAR')
+
 
 
   # image = tf.squeeze(tf.nn.lrn(image[tf.newaxis, :], 2, bias=1.0, alpha=0.001 / 9.0, beta=0.75), [0])
