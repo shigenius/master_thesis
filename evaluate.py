@@ -15,6 +15,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 import glob
 import re
+import shutil
 
 flags = tf.app.flags
 flags.DEFINE_string('data_dir', './data/',
@@ -38,6 +39,13 @@ def get_latest_ckpt(ckpt_dir):
     files = [os.path.splitext(i)[0] for i in glob.glob(ckpt_dir + "/*.meta")]
     latest_ckpt_path = [i for i in files if str(latest_id) in i][0]
     return latest_ckpt_path
+
+def get_best_score(ckpt_dir):
+    pattern = r'[0-9]*'
+    hoge = [re.findall(pattern, i) for i in glob.glob(os.path.join(ckpt_dir, "hall-of-fam/*"))]
+    best_score = max([int([j for j in i if j != ''][0]) for i in hoge])
+    best_score =  best_score / 100 if best_score is None else 0
+    return best_score
 
 def main(args):
     label_name_to_id = label_map_util.get_label_map_dict(os.path.join(FLAGS.data_dir, FLAGS.labelfile_name))
@@ -116,7 +124,21 @@ def main(args):
             if is_correct is True:
                 num_correct += 1
 
-        print("num of record:", num_record, "num of correct:", num_correct, "Acc:", num_correct/num_record)
+        mean_acc = num_correct / num_record
+        print("num of record:", num_record, "num of correct:", num_correct, "Acc:", mean_acc)
+
+
+        # スコアが高かったらckptその他を保存する
+        if mean_acc > get_best_score(FLAGS.checkpoint_dir):
+            save_dir = os.path.join(FLAGS.checkpoint_dir, "hall-of-fam", "ac"+str(mean_acc*100))
+            os.mkdirs(save_dir)
+            save_files = glob.glob(ckpt_path+"/*")
+            save_files.append("graph.pbtxt")
+            save_files.append("checkpoint")
+            for i in save_files:
+                shutil.copy2(i, save_dir)
+
+
     print("process finished")
     f.close()
 
