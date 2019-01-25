@@ -118,7 +118,7 @@ def shigenet2(images, crops, num_classes, dropout=0.5, is_training=False, reuse=
             with tf.variable_scope('logit') as scope:
                 # net = tf.concat([net_l, net_g], 3)
                 net = tf.add(net_l, net_g) # element-wise add
-                # net = slim.flatten(net, scope='flatten')
+                net = slim.flatten(net, scope='flatten')
                 # net = slim.fully_connected(net, 1000, scope='fc1')
                 # net = slim.dropout(net, dropout, scope='dropout1')
                 # net = slim.fully_connected(net, 500, scope='fc2')
