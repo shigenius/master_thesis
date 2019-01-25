@@ -28,6 +28,7 @@ seed1 = random.randint(0, 1000000)
 seed2 = random.randint(0, 1000000)
 seed3 = random.randint(0, 1000000)
 seed4 = random.randint(0, 1000000)
+seed5 = random.randint(0, 1000000)
 
 def gaussian_noise_layer(input_layer, std):
     noise = tf.random_normal(shape=tf.shape(input_layer), mean=0.0, stddev=std, dtype=tf.float32)
@@ -79,7 +80,9 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     image = tf_image_translate(image, tx=tx, ty=ty)
     cropped = tf_image_translate(cropped, tx=tx, ty=ty)
 
-    image = tf.contrib.image.rotate(image, 10 * math.pi / 180, interpolation='BILINEAR')
+    degrees = tf.random_normal(shape=[],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed5)
+    image = tf.contrib.image.rotate(image, degrees * math.pi / 180, interpolation='BILINEAR')
+    cropped = tf.contrib.image.rotate(cropped, degrees * math.pi / 180, interpolation='BILINEAR')
 
 
 
