@@ -148,25 +148,25 @@ def shigenet3_block(input, num_classes, keep_prob=1.0, is_training=False):
     # return 1x1xnum_classes tensor
     with slim.arg_scope([slim.conv2d, slim.fully_connected], padding='VALID',
                         activation_fn=tf.nn.relu):
-        net = slim.repeat(input, 2, slim.conv2d, 64, [3, 3], scope='conv1')
+        net = slim.repeat(input, 2, slim.conv2d, 20, [3, 3], scope='conv1')
         net = slim.max_pool2d(net, [2, 2], scope='pool1')
-        net = slim.repeat(net, 3, slim.conv2d, 128, [3, 3], scope='conv2')
+        net = slim.repeat(net, 3, slim.conv2d, 50, [3, 3], scope='conv2')
         net = slim.max_pool2d(net, [2, 2], scope='pool2')
-        net = slim.repeat(net, 3, slim.conv2d, 256, [3, 3], scope='conv3')
+        net = slim.repeat(net, 3, slim.conv2d, 100, [3, 3], scope='conv3')
         net = slim.max_pool2d(net, [2, 2], scope='pool3')
-        net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv4')
+        net = slim.repeat(net, 3, slim.conv2d, 256, [3, 3], scope='conv4')
         net = slim.max_pool2d(net, [2, 2], scope='pool4')
-        net = slim.repeat(net, 3, slim.conv2d, 2048, [3, 3], scope='conv5')
+        net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv5')
         net = slim.max_pool2d(net, [2, 2], scope='pool5')
 
-        net = slim.conv2d(net, 1024, [1, 1], padding='VALID', scope='pw-conv')
+        net = slim.conv2d(net, 512, [1, 1], padding='VALID', scope='pw-conv')
         # net = slim.dropout(net, keep_prob, is_training=is_training,
         #                    scope='dropout1')
-        net = slim.conv2d(net, 500, [1, 1], padding='VALID', scope='pw-conv2')
+        net = slim.conv2d(net, 100, [1, 1], padding='VALID', scope='pw-conv2')
         # net = slim.dropout(net, keep_prob, is_training=is_training,
         #                    scope='dropout2')
         net = slim.conv2d(net, num_classes, [1, 1], padding='VALID', scope='pw-conv3')
-
+        print(net)
         return net
 
 shigenet.default_input_size = vgg.vgg_16.default_image_size
