@@ -10,4 +10,7 @@ detect_seesa/
 *.weights
 *.csv
 *.xlsx
-*/config*.py
+detection/config.py
+detection/config_vgg.py
+detection/config_yolo.py
+
