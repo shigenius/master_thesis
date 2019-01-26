@@ -4,3 +4,7 @@ model/
 *.tfrecord*
 __pycache__/
 *.pyc
+outputs/
+saved_model/
+detect_seesa/
+*.weights
