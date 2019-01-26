@@ -64,6 +64,7 @@ def main(args):
     ckpt_path = get_latest_ckpt(FLAGS.checkpoint_dir)
     print("ckpt_path:", ckpt_path)
 
+
     # load the dataset
     dataset = shisa_instances.get_split('test', FLAGS.data_dir)
 

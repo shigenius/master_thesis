@@ -62,7 +62,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
       'image/object/bbox/xmin': tf.FixedLenFeature([1], tf.float32, default_value=tf.zeros([1], dtype=tf.float32)),
       'image/object/bbox/ymax': tf.FixedLenFeature([1], tf.float32, default_value=tf.zeros([1], dtype=tf.float32)),
       'image/object/bbox/xmax': tf.FixedLenFeature([1], tf.float32, default_value=tf.zeros([1], dtype=tf.float32)),
-      'image/filename': tf.FixedLenFeature((), tf.string, default_value=''),
+      'image/source_file': tf.FixedLenFeature((), tf.string, default_value=''),
       'image/source_video': tf.FixedLenFeature((), tf.string, default_value='')
   }
   #tf.VarLenFeature
@@ -71,7 +71,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
       'image': slim.tfexample_decoder.Image(image_key = 'image/encoded', format_key = 'image/format', shape=None, channels=3),
       'label': slim.tfexample_decoder.Tensor('image/object/class/label', shape=[]),
       'object/bbox': slim.tfexample_decoder.BoundingBox(['ymin', 'xmin', 'ymax', 'xmax'], 'image/object/bbox/'),
-      'fname': slim.tfexample_decoder.Tensor('image/filename', shape=[]),
+      'fname': slim.tfexample_decoder.Tensor('image/source_file', shape=[]),
       'videoname': slim.tfexample_decoder.Tensor('image/source_video', shape=[])
   }
   decoder = slim.tfexample_decoder.TFExampleDecoder(
