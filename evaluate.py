@@ -28,8 +28,7 @@ flags.DEFINE_string('labelfile_name', 'pascal_label_map.pbtxt',
                     'label file name that discribed pascal voc')
 flags.DEFINE_string('eval_log_name', 'eval.csv',
                     'output log name')
-flags.DEFINE_integer('eval_interval_secs', 1,
-                    'Number of seconds between evaluations.')
+
 FLAGS = flags.FLAGS
 
 def get_latest_ckpt(ckpt_dir):
