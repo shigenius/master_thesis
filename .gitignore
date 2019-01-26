@@ -8,3 +8,5 @@ outputs/
 saved_model/
 detect_seesa/
 *.weights
+*.csv
+*.xlsx
