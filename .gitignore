@@ -10,3 +10,4 @@ detect_seesa/
 *.weights
 *.csv
 *.xlsx
+config*.py
