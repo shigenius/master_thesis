@@ -287,7 +287,7 @@ def main(argv=None):
                                                      iou_threshold=cfg.IOU_THRESHOLD)
                 detect_time0 = time.time()-t0
 
-                print("detected boxes in :{:.2f}s ".format(detect_time), filtered_boxes)
+                print("detected boxes in :{:.2f}s ".format(detect_time0), filtered_boxes)
 
                 target_label = 0  # seesaaの場合 (データセットのクラス番号毎にここを変える．)
 
