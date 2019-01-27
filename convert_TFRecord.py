@@ -29,7 +29,8 @@ import io
 import logging
 import os
 
-from xml import etree
+# from xml import etree
+from xml.etree import ElementTree as etree
 import PIL.Image
 import tensorflow as tf
 
