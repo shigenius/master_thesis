@@ -13,4 +13,6 @@ detect_seesa/
 detection/config.py
 detection/config_vgg.py
 detection/config_yolo.py
-
+instance_detection/config.py
+instance_detection/config_vgg.py
+instance_detection/config_yolo.py

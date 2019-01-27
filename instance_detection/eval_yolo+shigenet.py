@@ -251,6 +251,7 @@ def main(argv=None):
                 input_image_path = filenames_for_shigenet.decode('utf-8')
                 print(batch, input_image_path)
                 print("images_for_shigenet.shape:", images_for_shigenet.shape)
+                print("bboxes_for_shigenet", bboxes_for_shigenet)
 
                 input_for_yolo = Image.open(input_image_path)
                 input_for_yolo_resized = letter_box_image(input_for_yolo, cfg.IMAGE_SIZE, cfg.IMAGE_SIZE, 128)
@@ -279,11 +280,15 @@ def main(argv=None):
                             cropped_boxes = []
                             for box, score in bboxs: # 候補領域毎の処理
                                 box_ = copy.deepcopy(box)  # convert_to_original_size()がbboxを破壊してしまうためdeepcopy
-                                orig_size_box = convert_to_original_size(box,
-                                                                         np.array((cfg.IMAGE_SIZE, cfg.IMAGE_SIZE)),
-                                                                         np.array(input_for_yolo.size), True)
+                                # orig_size_box = convert_to_original_size(box,
+                                #                                          np.array((cfg.IMAGE_SIZE, cfg.IMAGE_SIZE)),
+                                #                                          np.array(input_for_yolo.size), True)
                                 # print(orig_size_box) # [x0, y0, x1, y1]
-                                input_bbox = np.array([[orig_size_box[1], orig_size_box[0], orig_size_box[3], orig_size_box[2]]]) # to [['ymin'], ['xmin'], ['ymax'], ['xmax']]
+
+                                normed_box = [box[0] / cfg.IMAGE_SIZE, box[1] / cfg.IMAGE_SIZE, box[2] / cfg.IMAGE_SIZE, box[3] / cfg.IMAGE_SIZE]
+                                print("gt_box:",  bboxes_for_shigenet)
+                                print("normed_box:", normed_box)
+                                input_bbox = np.array([[normed_box[1], normed_box[0], normed_box[3], normed_box[2]]]) # to [['ymin'], ['xmin'], ['ymax'], ['xmax']]
 
                                 acc, pred_s = sess.run([accuracy, predictions1D], feed_dict={image_placeholder: images_for_shigenet,
                                                                                            bbox_placeholder: input_bbox,
