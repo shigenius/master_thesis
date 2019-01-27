@@ -68,7 +68,7 @@ def evaluate(filtered_boxes, gt_anno, orig_img, thresh=0.5):
         iou_l.append(iou)
 
         if cls == gt_label: # classが一致しているか
-            if iou > thresh:
+            if iou > thresh and tp == 0:
                 tp += 1 # labelが一致かつiou>threshの時TPを+1
             else:
                 fp += 1

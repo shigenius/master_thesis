@@ -146,7 +146,7 @@ def main(argv=None):
     f = open(cfg.OUTPUT_LOG_PATH, 'w')
     writer = csv.writer(f, lineterminator='\n')
     writer.writerow(['image path', 'class/movie_name', 'IoU', 'TP', 'FP', 'FN', 'Average Precision', 'gt label',
-                     ' highest_conf_label', 'detect time'])
+                     ' highest_conf_label', 'detect time', 'recognition time'])
 
     total_iou = []  # 画像毎のiouのリスト
     total_tp = 0  # TP : IoU > 0.5かつ GT==Pred_classのPositiveの数
@@ -285,7 +285,7 @@ def main(argv=None):
                 filtered_boxes = non_max_suppression(detected_boxes,
                                                      confidence_threshold=cfg.CONF_THRESHOLD,
                                                      iou_threshold=cfg.IOU_THRESHOLD)
-                detect_time = time.time()-t0
+                detect_time0 = time.time()-t0
 
                 print("detected boxes in :{:.2f}s ".format(detect_time), filtered_boxes)
 
@@ -310,9 +310,11 @@ def main(argv=None):
                                 # print("normed_box:", normed_box)
                                 input_bbox = np.array([[normed_box[1], normed_box[0], normed_box[3], normed_box[2]]], ) # to [['ymin'], ['xmin'], ['ymax'], ['xmax']]
 
+                                t1 = time.time()
                                 summary, acc, pred_s = sess.run([merged, accuracy, predictions1D], feed_dict={image_placeholder: images_for_shigenet,
                                                                                            bbox_placeholder: input_bbox,
                                                                                            labels_placeholder: labels_for_shigenet})
+                                detect_time1 = time.time() - t1
 
                                 sumwriter.add_summary(summary, batch)
 
@@ -372,7 +374,7 @@ def main(argv=None):
 
                 pred_label = label_id_to_name[highest_conf_label] if highest_conf_label != -1 else "None"
                 save_messe = [input_image_path, os.path.join(movie_name, movie_parant_dir), iou, tp, fp, fn, precision,
-                              label_id_to_name[labels_for_shigenet[0]], pred_label, detect_time]
+                              label_id_to_name[labels_for_shigenet[0]], pred_label, detect_time0, detect_time1]
                 print(save_messe)
                 writer.writerow(save_messe)
 
