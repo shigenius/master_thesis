@@ -8,7 +8,7 @@ import time
 import yolo_v3
 import yolo_v3_tiny
 
-from utils import load_coco_names, draw_boxes, get_boxes_and_inputs, get_boxes_and_inputs_pb, non_max_suppression, \
+from util import load_coco_names, draw_boxes, get_boxes_and_inputs, get_boxes_and_inputs_pb, non_max_suppression, \
                   load_graph, letter_box_image, letter_box_pos_to_original_pos, convert_to_original_size, _iou
 
 import tensorflow.contrib.slim as slim
@@ -25,6 +25,7 @@ from eval_yolo import evaluate
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from datasets import shisa_instances
 from model import shigenet, shigenet2, shigenet3
+from utils import label_map_util
 
 def padding(image):
     # アス比の違う画像をゼロパディングして正方形にする
@@ -159,16 +160,12 @@ def main(argv=None):
         # for specific  recognition
         #
 
-        vgg16_image_size = vgg_16.default_image_size
+        label_name_to_id = label_map_util.get_label_map_dict(os.path.join(cfg.TFRECORED_DIR_PATH, cfg.S_LABEL_FILE_NAME))
+        label_id_to_name = {items[1]: items[0] for items in label_name_to_id.items()}
+        label_id_to_name[0] = "background"
 
-        s_class_names = cfg.S_CLASS_PATH
-        s_classes = [l.split(" ") for l in open(s_class_names, "r")]
-        if len(s_classes[0]):  # classフォーマットが "id classname"の場合
-            s_labels = {int(l[0]): l[1].replace("\n", "") for l in s_classes}
-        else:  # classフォーマットが "classname"のみの場合
-            s_labels = {i: l.replace("\n", "") for i, l in enumerate(s_classes)}
+        num_classes_s = len(label_id_to_name.keys())
 
-        num_classes_s = len(s_labels.keys())
         s_model = cfg.S_CKPT_FILE
 
         # tensorflow pipelines op
@@ -344,9 +341,9 @@ def main(argv=None):
                 movie_name = os.path.basename(os.path.dirname(input_image_path))
                 movie_parant_dir = os.path.basename(os.path.dirname(os.path.dirname(input_image_path)))
 
-                pred_label = s_labels[highest_conf_label] if highest_conf_label != -1 else "None"
+                pred_label = label_id_to_name[highest_conf_label] if highest_conf_label != -1 else "None"
                 save_messe = [input_image_path, os.path.join(movie_name, movie_parant_dir), iou, tp, fp, fn, precision,
-                              s_labels[labels_for_shigenet[0]], pred_label, detect_time]
+                              label_id_to_name[labels_for_shigenet[0]], pred_label, detect_time]
                 print(save_messe)
                 writer.writerow(save_messe)
 

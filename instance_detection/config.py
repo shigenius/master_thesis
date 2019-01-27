@@ -33,9 +33,10 @@ IOU_THRESHOLD = 0.1
 # Specific object recognition parameter
 #
 TFRECORED_DIR_PATH = '../data/'
+S_LABEL_FILE_NAME = 'pascal_label_map.pbtxt'
 S_CKPT_FILE = '/Users/shigetomi/dev/master_thesis/log/train/hall-of-fam/ac79.2/model.ckpt-3000'
-s_class_name = 'label.txt'
-S_CLASS_PATH = os.path.join(DATASET_PATH, s_class_name)
+# s_class_name = 'label.txt'
+# S_CLASS_PATH = os.path.join(DATASET_PATH, s_class_name)
 S_EXTRACTOR_NUM_OF_CLASSES = 9 # 抽出器の出力層のニューロン数
 
 #

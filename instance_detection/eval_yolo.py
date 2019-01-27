@@ -8,7 +8,7 @@ import time
 import yolo_v3
 import yolo_v3_tiny
 
-from utils import load_coco_names, draw_boxes, get_boxes_and_inputs, get_boxes_and_inputs_pb, non_max_suppression, \
+from util import load_coco_names, draw_boxes, get_boxes_and_inputs, get_boxes_and_inputs_pb, non_max_suppression, \
                   load_graph, letter_box_image, letter_box_pos_to_original_pos, convert_to_original_size, _iou
 
 import tensorflow.contrib.slim as slim
