@@ -16,3 +16,4 @@ detection/config_yolo.py
 instance_detection/config.py
 instance_detection/config_vgg.py
 instance_detection/config_yolo.py
+*events.out.tfevents.*

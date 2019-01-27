@@ -108,7 +108,7 @@ def preprocessing_op(image, bbox, output_height, output_width):
     crop_width =  tf.cast((bbox[0][3]-bbox[0][1]) * tf.to_float(tf.shape(image)[1]), tf.int32)
     cropped = tf.squeeze(tf.image.crop_and_resize(image[tf.newaxis, :], bbox, box_ind=[0],
                                                   crop_size=[crop_height, crop_width]), [0])
-    tf.summary.image('crop_before_pad', cropped[tf.newaxis, :], 1)
+    # tf.summary.image('crop_before_pad', cropped[tf.newaxis, :], 1)
     max_size_c = tf.reduce_max(tf.shape(cropped)[:-1])
     cropped = tf.image.resize_images(
         tf.image.resize_image_with_crop_or_pad(cropped, max_size_c, max_size_c),
@@ -119,9 +119,9 @@ def preprocessing_op(image, bbox, output_height, output_width):
         tf.image.resize_image_with_crop_or_pad(image, min_size, min_size),
         [output_height, output_width])
 
-    #  visualize on tensorboard
-    tf.summary.image('image', image[tf.newaxis, :], 1)
-    tf.summary.image('crop', cropped[tf.newaxis, :], 1)
+    # #  visualize on tensorboard
+    # tf.summary.image('image', image[tf.newaxis, :], 1)
+    # tf.summary.image('crop', cropped[tf.newaxis, :], 1)
 
 
     # normalize -1~1
