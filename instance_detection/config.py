@@ -32,18 +32,17 @@ IOU_THRESHOLD = 0.1
 #
 # Specific object recognition parameter
 #
-
-S_CKPT_FILE = '/Users/shigetomi/workspace/tensorflow_works/tf-slim/model/instance_recog/shisa_0828.ckpt-95'
+TFRECORED_DIR_PATH = '../data/'
+S_CKPT_FILE = '/Users/shigetomi/dev/master_thesis/log/train/hall-of-fam/ac79.2/model.ckpt-3000'
 s_class_name = 'label.txt'
 S_CLASS_PATH = os.path.join(DATASET_PATH, s_class_name)
 S_EXTRACTOR_NUM_OF_CLASSES = 9 # 抽出器の出力層のニューロン数
-S_EXTRACTOR_NAME = 'vgg_16'
 
 #
 # outputs
 #
 
-OUTPUT_DIR = '/Users/shigetomi/Desktop/outputs/'
+OUTPUT_DIR = '/Users/shigetomi/dev/master_thesis/instance_detection/outputs/yolo+shigenet'
 OUTPUT_LOG_name = 'log.csv'
 OUTPUT_LOG_PATH = os.path.join(OUTPUT_DIR, OUTPUT_LOG_name)
 
