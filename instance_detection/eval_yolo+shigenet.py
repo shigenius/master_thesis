@@ -101,12 +101,28 @@ def load_batch(dataset, batch_size=1, height=shigenet.default_input_size, width=
 def preprocessing_op(image, bbox, output_height, output_width):
     # input image has orig size
     # preprocessing
+    # cropped = tf.squeeze(tf.image.crop_and_resize(image[tf.newaxis, :], bbox, box_ind=[0],
+    #                                               crop_size=[output_height, output_width]), [0])
+
+    crop_height = tf.cast((bbox[0][2]-bbox[0][0]) * tf.to_float(tf.shape(image)[0]), tf.int32)
+    crop_width =  tf.cast((bbox[0][3]-bbox[0][1]) * tf.to_float(tf.shape(image)[1]), tf.int32)
     cropped = tf.squeeze(tf.image.crop_and_resize(image[tf.newaxis, :], bbox, box_ind=[0],
-                                                  crop_size=[output_height, output_width]), [0])
+                                                  crop_size=[crop_height, crop_width]), [0])
+    tf.summary.image('crop_before_pad', cropped[tf.newaxis, :], 1)
+    max_size_c = tf.reduce_max(tf.shape(cropped)[:-1])
+    cropped = tf.image.resize_images(
+        tf.image.resize_image_with_crop_or_pad(cropped, max_size_c, max_size_c),
+        [output_height, output_width])
+
     min_size = tf.reduce_min(tf.shape(image)[:-1])
     image = tf.image.resize_images(
         tf.image.resize_image_with_crop_or_pad(image, min_size, min_size),
         [output_height, output_width])
+
+    #  visualize on tensorboard
+    tf.summary.image('image', image[tf.newaxis, :], 1)
+    tf.summary.image('crop', cropped[tf.newaxis, :], 1)
+
 
     # normalize -1~1
     image = tf.to_float(image)
@@ -219,6 +235,10 @@ def main(argv=None):
         restorer_shigenet = tf.train.Saver(variables_to_restore)
 
         with tf.Session(config=config) as sess:
+
+            merged = tf.summary.merge_all()
+            sumwriter = tf.summary.FileWriter('./logdir', sess.graph)  # 保存先を./logdirに設定
+
             t0 = time.time()
             restorer_yolo.restore(sess, cfg.CKPT_FILE)
             print('YOLO v3 Model restored in {:.2f}s'.format(time.time()-t0), "from:", cfg.CKPT_FILE)
@@ -280,19 +300,22 @@ def main(argv=None):
                             cropped_boxes = []
                             for box, score in bboxs: # 候補領域毎の処理
                                 box_ = copy.deepcopy(box)  # convert_to_original_size()がbboxを破壊してしまうためdeepcopy
-                                # orig_size_box = convert_to_original_size(box,
-                                #                                          np.array((cfg.IMAGE_SIZE, cfg.IMAGE_SIZE)),
-                                #                                          np.array(input_for_yolo.size), True)
+                                orig_size_box = convert_to_original_size(box,
+                                                                         np.array((cfg.IMAGE_SIZE, cfg.IMAGE_SIZE)),
+                                                                         np.array(input_for_yolo.size), True)
                                 # print(orig_size_box) # [x0, y0, x1, y1]
+                                print(images_for_shigenet.shape)
+                                normed_box = [orig_size_box[0] / images_for_shigenet.shape[1], orig_size_box[1] / images_for_shigenet.shape[0], orig_size_box[2] / images_for_shigenet.shape[1], orig_size_box[3] / images_for_shigenet.shape[0]]
+                                # print("gt_box:",  bboxes_for_shigenet)
+                                # print("normed_box:", normed_box)
+                                input_bbox = np.array([[normed_box[1], normed_box[0], normed_box[3], normed_box[2]]], ) # to [['ymin'], ['xmin'], ['ymax'], ['xmax']]
 
-                                normed_box = [box[0] / cfg.IMAGE_SIZE, box[1] / cfg.IMAGE_SIZE, box[2] / cfg.IMAGE_SIZE, box[3] / cfg.IMAGE_SIZE]
-                                print("gt_box:",  bboxes_for_shigenet)
-                                print("normed_box:", normed_box)
-                                input_bbox = np.array([[normed_box[1], normed_box[0], normed_box[3], normed_box[2]]]) # to [['ymin'], ['xmin'], ['ymax'], ['xmax']]
-
-                                acc, pred_s = sess.run([accuracy, predictions1D], feed_dict={image_placeholder: images_for_shigenet,
+                                summary, acc, pred_s = sess.run([merged, accuracy, predictions1D], feed_dict={image_placeholder: images_for_shigenet,
                                                                                            bbox_placeholder: input_bbox,
                                                                                            labels_placeholder: labels_for_shigenet})
+
+                                sumwriter.add_summary(summary, batch)
+
                                 print("acc:", acc, "pred, gtlabel:", pred_s, labels_for_shigenet)
 
                                 # evaluation
@@ -313,7 +336,8 @@ def main(argv=None):
                     if specific_predicted_boxes is not {}:
                         gt_anno = {int(labels_for_shigenet[0]): [bboxes_for_shigenet[0][1] * images_for_shigenet.shape[1], bboxes_for_shigenet[0][0] * images_for_shigenet.shape[0],
                                                                  bboxes_for_shigenet[0][3] * images_for_shigenet.shape[1], bboxes_for_shigenet[0][2] * images_for_shigenet.shape[0]]}
-                        # print("GT:", gt_anno)
+                        print("GT:", gt_anno)
+                        print("specific_predicted_boxes:", specific_predicted_boxes)
                         [tp, fp, fn], iou, precision, highest_conf_label = evaluate(specific_predicted_boxes, gt_anno, input_for_yolo,
                                                                                     thresh=0.5)  # 一枚の画像の評価を行う
                     else: # 候補領域が検出されているが対象クラスがなかった場合．
