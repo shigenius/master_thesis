@@ -29,7 +29,7 @@ import io
 import logging
 import os
 
-from lxml import etree
+from xml import etree
 import PIL.Image
 import tensorflow as tf
 

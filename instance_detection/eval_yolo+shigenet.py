@@ -249,6 +249,8 @@ def main(argv=None):
 
                 # 一度dataset propiderからimageとpathを保存しておく．pathからyolo用の別のimage formatでの画像を用意する．
                 images_for_shigenet, labels_for_shigenet, bboxes_for_shigenet, filenames_for_shigenet, videonames_for_shigenet = sess.run([images, labels, bboxes, filenames, videonames])
+
+                labels_for_shigenet = np.reshape(labels_for_shigenet, (1)) # 整形
                 input_image_path = filenames_for_shigenet.decode('utf-8')
                 print(batch, input_image_path)
                 print("images_for_shigenet.shape:", images_for_shigenet.shape)
@@ -285,7 +287,7 @@ def main(argv=None):
                                                                          np.array(input_for_yolo.size), True)
                                 # print(orig_size_box) # [x0, y0, x1, y1]
                                 input_bbox = np.array([[orig_size_box[1], orig_size_box[0], orig_size_box[3], orig_size_box[2]]]) # to [['ymin'], ['xmin'], ['ymax'], ['xmax']]
-                                labels_for_shigenet = np.reshape(labels_for_shigenet, (1))
+
                                 acc, pred_s = sess.run([accuracy, predictions1D], feed_dict={image_placeholder: images_for_shigenet,
                                                                                            bbox_placeholder: input_bbox,
                                                                                            labels_placeholder: labels_for_shigenet})
@@ -342,9 +344,9 @@ def main(argv=None):
                 movie_name = os.path.basename(os.path.dirname(input_image_path))
                 movie_parant_dir = os.path.basename(os.path.dirname(os.path.dirname(input_image_path)))
 
-                pred_label = s_classes[highest_conf_label] if highest_conf_label != -1 else "None"
+                pred_label = s_labels[highest_conf_label] if highest_conf_label != -1 else "None"
                 save_messe = [input_image_path, os.path.join(movie_name, movie_parant_dir), iou, tp, fp, fn, precision,
-                              s_classes[labels_for_shigenet[0]], pred_label, detect_time]
+                              s_labels[labels_for_shigenet[0]], pred_label, detect_time]
                 print(save_messe)
                 writer.writerow(save_messe)
 
