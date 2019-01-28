@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from datasets import shisa_instances
-from model import shigenet, shigenet2, shigenet3, shigenet2_multiply, load_batch
+from model import shigenet, shigenet2, shigenet3, shigenet2_multiply, shigenet2_with_sigmoid_block, load_batch
 
 slim = tf.contrib.slim
 
