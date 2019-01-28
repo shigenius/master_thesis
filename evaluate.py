@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from datasets import shisa_instances
-from model import shigenet, shigenet2, shigenet3, load_batch
+from model import shigenet, shigenet2, shigenet3, shigenet2_multiply, load_batch
 
 
 slim = tf.contrib.slim
@@ -77,7 +77,7 @@ def main(args):
         shuffle=False)
 
     # run the image through the model
-    predictions = shigenet2(images, crops, dataset.num_classes, is_training=False, reuse=None)
+    predictions = shigenet2_multiply(images, crops, dataset.num_classes, is_training=False, reuse=None)
     predictions1D = tf.to_int64(tf.argmax(predictions, 1))
 
     names_to_values, names_to_updates = slim.metrics.aggregate_metric_map({

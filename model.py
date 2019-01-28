@@ -188,6 +188,26 @@ def shigenet3_block(input, num_classes, keep_prob=1.0, is_training=False):
         print(net)
         return net
 
+
+def shigenet2_multiply(images, crops, num_classes, keep_prob=0.8, is_training=False, reuse=None):
+    # focus branches
+    with tf.variable_scope('shigenet2', reuse=reuse) as scope:
+        with slim.arg_scope([slim.conv2d, slim.fully_connected],
+                            activation_fn=tf.nn.relu):
+            with tf.variable_scope('branch_crop') as scope:
+                # net_l = shigenet3_block(crops, num_classes=num_classes, keep_prob=keep_prob, is_training=is_training)
+                net_l = shigenet2_block(crops, num_classes, keep_prob=keep_prob, is_training=is_training)
+
+            with tf.variable_scope('branch_orig') as scope:
+                # net_g = shigenet3_block(images, num_classes=num_classes, keep_prob=keep_prob, is_training=is_training)
+                net_g = shigenet2_block(images, num_classes, keep_prob=keep_prob, is_training=is_training)
+
+            with tf.variable_scope('logit') as scope:
+                net = tf.multiply(net_l, net_g) # element-wise multiply
+                net = slim.flatten(net, scope='flatten')
+
+        return net
+
 shigenet.default_input_size = vgg.vgg_16.default_image_size
 
 def show_variables():
