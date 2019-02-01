@@ -76,22 +76,37 @@ def shigenet2(images, crops, num_classes, keep_prob=0.8, is_training=False, reus
             with tf.variable_scope('branch_crop') as scope:
                 # net_l = shigenet3_block(crops, num_classes=num_classes, keep_prob=keep_prob, is_training=is_training)
                 net_l = slim.conv2d(crops, 20, [3, 3], padding='VALID', scope='conv1')
+                print(net_l)
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool1')
+                print(net_l)
                 net_l = slim.conv2d(net_l, 50, [3, 3], padding='VALID', scope='conv2')
+                print(net_l)
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool2')
+                print(net_l)
                 net_l = slim.conv2d(net_l, 100, [3, 3], padding='VALID', scope='conv3')
+                print(net_l)
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool3')
+                print(net_l)
                 net_l = slim.conv2d(net_l, 200, [3, 3], padding='VALID', scope='conv4')
+                print(net_l)
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool4')
+                print(net_l)
                 net_l = slim.conv2d(net_l, 500, [3, 3], padding='VALID', scope='conv5')
+                print(net_l)
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool5')
+                print(net_l)
                 net_l = slim.conv2d(net_l, 1024, [3, 3], padding='VALID', scope='conv6')
+                print(net_l)
                 net_l = slim.max_pool2d(net_l, [2, 2], scope='pool6')
+                print(net_l)
                 net_l = slim.conv2d(net_l, 1024, [1, 1], padding='VALID', scope='pw-conv')
+                print(net_l)
                 net_l = slim.dropout(net_l, keep_prob, is_training=is_training, scope='dropout1')
                 net_l = slim.conv2d(net_l, 500, [1, 1], padding='VALID', scope='pw-conv2')
+                print(net_l)
                 net_l = slim.dropout(net_l, keep_prob, is_training=is_training, scope='dropout2')
                 net_l = slim.conv2d(net_l, num_classes, [1, 1], padding='VALID', scope='pw-conv3')
+                print(net_l)
 
             with tf.variable_scope('branch_orig') as scope:
                 # net_g = shigenet3_block(images, num_classes=num_classes, keep_prob=keep_prob, is_training=is_training)
@@ -253,6 +268,26 @@ def shigenet2_with_sigmoid(images, crops, num_classes, keep_prob=0.8, is_trainin
                 net_g = slim.conv2d(net_g, 500, [1, 1], padding='VALID', scope='pw-conv2')
                 net_g = slim.dropout(net_g, keep_prob, is_training=is_training, scope='dropout2')
                 net_g = slim.conv2d(net_g, num_classes, [1, 1], activation_fn=tf.nn.sigmoid, padding='VALID', scope='pw-conv3')
+            with tf.variable_scope('logit') as scope:
+                net = tf.add(net_l, net_g) # element-wise multiply
+                net = slim.flatten(net, scope='flatten')
+
+        return net
+
+
+def shigenet2_ex(images, crops, num_classes, keep_prob=0.8, is_training=False, reuse=None):
+    # focus branches
+    with tf.variable_scope('shigenet2', reuse=reuse) as scope:
+        with slim.arg_scope([slim.conv2d, slim.fully_connected],
+                            activation_fn=tf.nn.relu):
+            with tf.variable_scope('branch_crop') as scope:
+                # net_l = shigenet3_block(crops, num_classes=num_classes, keep_prob=keep_prob, is_training=is_training)
+                net_l = shigenet2_block(crops, num_classes, keep_prob=keep_prob, is_training=is_training)
+
+            with tf.variable_scope('branch_orig') as scope:
+                # net_g = shigenet3_block(images, num_classes=num_classes, keep_prob=keep_prob, is_training=is_training)
+                net_g = shigenet2_block(images, num_classes, keep_prob=keep_prob, is_training=is_training)
+
             with tf.variable_scope('logit') as scope:
                 net = tf.add(net_l, net_g) # element-wise multiply
                 net = slim.flatten(net, scope='flatten')
