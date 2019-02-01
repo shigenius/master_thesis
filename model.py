@@ -289,7 +289,7 @@ def shigenet2_ex(images, crops, num_classes, keep_prob=0.8, is_training=False, r
                 net_g = shigenet2_block(images, num_classes, keep_prob=keep_prob, is_training=is_training)
 
             with tf.variable_scope('logit') as scope:
-                net = tf.add(net_l, net_g) # element-wise multiply
+                net = tf.multiply(net_l, net_g) # element-wise multiply
                 net = slim.flatten(net, scope='flatten')
 
         return net
