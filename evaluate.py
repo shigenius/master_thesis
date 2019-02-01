@@ -77,7 +77,7 @@ def main(args):
         shuffle=False)
 
     # run the image through the model
-    predictions = shigenet2_ex(images, crops, dataset.num_classes, is_training=False, reuse=None)
+    predictions = shigenet2_with_sigmoid(images, crops, dataset.num_classes, is_training=False, reuse=None)
     predictions1D = tf.to_int64(tf.argmax(predictions, 1))
 
     names_to_values, names_to_updates = slim.metrics.aggregate_metric_map({

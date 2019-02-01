@@ -40,7 +40,7 @@ def main(args):
     #     is_training=False)
 
     # run the image through the model
-    train_predictions = shigenet2_ex(train_images, train_crops, train_dataset.num_classes, is_training=True, reuse=None)
+    train_predictions = shigenet2_with_sigmoid(train_images, train_crops, train_dataset.num_classes, is_training=True, reuse=None)
     # valid_predictions = shigenet2(valid_images, valid_crops, valid_dataset.num_classes, is_training=False, reuse=True)
 
     # get the cross-entropy loss
