@@ -4,6 +4,7 @@ model/
 *.tfrecord*
 __pycache__/
 *.pyc
+*/*.pyc
 outputs/
 saved_model/
 detect_seesa/
