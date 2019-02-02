@@ -79,7 +79,7 @@ def evaluate(filtered_boxes, gt_anno, orig_img, thresh=0.5):
             highest_conf = bbox[1]
             highest_conf_label = cls
 
-    precision = tp / total_positives
+    precision = tp / (tp+fp)
     average_iou = sum(iou_l)/(len(iou_l) + 1e-05) # 画像一枚のIoU
     fn = len(gt_anno.values()) - (tp+fp) if len(gt_anno.values()) - (tp+fp) > 0 else 0
     return [tp, fp, fn], average_iou, precision, highest_conf_label
