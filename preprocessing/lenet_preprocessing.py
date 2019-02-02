@@ -64,10 +64,10 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     # color augmentations
     image   = tf.image.random_brightness(image, max_delta=63, seed=seed1)
     cropped = tf.image.random_brightness(cropped, max_delta=63, seed=seed1)
-    image   = tf.image.random_saturation(image, lower=0.5, upper=1.5, seed=seed2)
-    cropped = tf.image.random_saturation(cropped, lower=0.5, upper=1.5, seed=seed2)
-  #   # image   = tf.image.random_hue(image, max_delta=0.2, seed=seed3)
-  #   # cropped = tf.image.random_hue(cropped, max_delta=0.2, seed=seed3)
+    # image   = tf.image.random_saturation(image, lower=0.5, upper=1.5, seed=seed2)
+    # cropped = tf.image.random_saturation(cropped, lower=0.5, upper=1.5, seed=seed2)
+    image   = tf.image.random_hue(image, max_delta=0.2, seed=seed3)
+    cropped = tf.image.random_hue(cropped, max_delta=0.2, seed=seed3)
     image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed4)
     cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
   #
