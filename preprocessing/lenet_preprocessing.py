@@ -71,8 +71,8 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
     image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed4)
     cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
   #
-  #   image = gaussian_noise_layer(image, .2)
-  #   cropped = gaussian_noise_layer(cropped, .2)
+    image = gaussian_noise_layer(image, .2)
+    cropped = gaussian_noise_layer(cropped, .2)
   #
   #   # spatial augments
   #   tx = tf.random_normal(shape=[],mean=0.0, stddev=20.0,dtype=tf.float32, seed=seed2) # 正規分布的なランダム値
