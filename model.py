@@ -289,9 +289,8 @@ def shigenet2_ex(images, crops, num_classes, keep_prob=0.8, is_training=False, r
                 net_g = shigenet2_block(images, num_classes, keep_prob=keep_prob, is_training=is_training)
 
             with tf.variable_scope('logit') as scope:
-                net = tf.concat([net_l, net_g], 3) # element-wise multiply
+                net = tf.add(net_l, net_g) # element-wise multiply
                 net = slim.flatten(net, scope='flatten')
-                net = slim.fully_connected(net, num_classes, activation_fn=None, scope='fc3')
         return net
 
 shigenet.default_input_size = vgg.vgg_16.default_image_size
