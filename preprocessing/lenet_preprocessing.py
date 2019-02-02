@@ -68,8 +68,8 @@ def preprocess_image(image, bbox, output_height, output_width, is_training):
   #   # cropped = tf.image.random_saturation(cropped, lower=0.5, upper=1.5, seed=seed2)
   #   # image   = tf.image.random_hue(image, max_delta=0.2, seed=seed3)
   #   # cropped = tf.image.random_hue(cropped, max_delta=0.2, seed=seed3)
-  #   image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed4)
-  #   cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
+    image   = tf.image.random_contrast(image, lower=0.2, upper=1.8, seed=seed4)
+    cropped = tf.image.random_contrast(cropped, lower=0.2, upper=1.8, seed=seed4)
   #
   #   image = gaussian_noise_layer(image, .2)
   #   cropped = gaussian_noise_layer(cropped, .2)
